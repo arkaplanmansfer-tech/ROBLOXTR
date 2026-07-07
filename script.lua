@@ -1,6 +1,7 @@
 -- ROBLOXTR PREMIUM PANEL (v3.0) - Loadstring Loader
 local success, result = pcall(function()
-    return game:HttpGet("https://githubusercontent.com")
+    -- Buraya senin panel.lua dosyanın gerçek linkini ekledim:
+    return game:HttpGet("https://raw.githubusercontent.com/arkaplanmansfer-tech/ROBLOXTR/main/panel.lua")
 end)
 
 if success and result then
