@@ -1,1 +1,255 @@
-local sg = Instance.new("ScreenGui"); sg.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui"); sg.ZIndexBehavior = Enum.ZIndexBehavior.Sibling; local mf = Instance.new("Frame"); mf.Name = "MainFrame"; mf.Parent = sg; mf.BackgroundColor3 = Color3.fromRGB(20, 20, 20); mf.BackgroundTransparency = 0.15; mf.Position = UDim2.new(0.25, 0, 0.2, 0); mf.Size = UDim2.new(0, 480, 0, 320); mf.Visible = false; local mc = Instance.new("UICorner"); mc.CornerRadius = UDim.new(0, 10); mc.Parent = mf; local sidebar = Instance.new("Frame"); sidebar.Name = "Sidebar"; sidebar.Parent = mf; sidebar.BackgroundColor3 = Color3.fromRGB(15, 15, 15); sidebar.BackgroundTransparency = 0.3; sidebar.Size = UDim2.new(0, 140, 1, 0); local sc = Instance.new("UICorner"); sc.CornerRadius = UDim.new(0, 10); sc.Parent = sidebar; local t = Instance.new("TextLabel"); t.Parent = sidebar; t.BackgroundTransparency = 1; t.Position = UDim2.new(0, 12, 0, 15); t.Size = UDim2.new(0, 120, 0, 25); t.Font = Enum.Font.SourceSansBold; t.Text = "RobloxTR v2.2"; t.TextColor3 = Color3.fromRGB(255, 190, 0); t.TextSize = 18; t.TextXAlignment = Enum.TextXAlignment.Left; local st = Instance.new("TextLabel"); st.Parent = sidebar; st.BackgroundTransparency = 1; st.Position = UDim2.new(0, 12, 0, 35); st.Size = UDim2.new(0, 120, 0, 15); st.Font = Enum.Font.SourceSans; st.Text = "Kurucu: Mansfer"; st.TextColor3 = Color3.fromRGB(150, 150, 150); st.TextSize = 12; st.TextXAlignment = Enum.TextXAlignment.Left; local cb = Instance.new("TextButton"); cb.Parent = mf; cb.BackgroundTransparency = 1; cb.Position = UDim2.new(0, 445, 0, 10); cb.Size = UDim2.new(0, 25, 0, 25); cb.Font = Enum.Font.SourceSansBold; cb.Text = "X"; cb.TextColor3 = Color3.fromRGB(255, 50, 50); cb.TextSize = 18; local mainContent = Instance.new("Frame"); mainContent.Name = "MainContent"; mainContent.Parent = mf; mainContent.BackgroundTransparency = 1; mainContent.Position = UDim2.new(0, 150, 0, 45); mainContent.Size = UDim2.new(0, 315, 0, 260); mainContent.Visible = true; local aimContent = Instance.new("Frame"); aimContent.Name = "AimContent"; aimContent.Parent = mf; aimContent.BackgroundTransparency = 1; aimContent.Position = UDim2.new(0, 150, 0, 45); aimContent.Size = UDim2.new(0, 315, 0, 260); aimContent.Visible = false; local settingsContent = Instance.new("Frame"); settingsContent.Name = "SettingsContent"; settingsContent.Parent = mf; settingsContent.BackgroundTransparency = 1; settingsContent.Position = UDim2.new(0, 150, 0, 45); settingsContent.Size = UDim2.new(0, 315, 0, 260); settingsContent.Visible = false; local l1 = Instance.new("UIListLayout"); l1.Parent = mainContent; l1.SortOrder = Enum.SortOrder.LayoutOrder; l1.Padding = UDim.new(0, 6); local l2 = Instance.new("UIListLayout"); l2.Parent = aimContent; l2.SortOrder = Enum.SortOrder.LayoutOrder; l2.Padding = UDim.new(0, 8); local l3 = Instance.new("UIListLayout"); l3.Parent = settingsContent; l3.SortOrder = Enum.SortOrder.LayoutOrder; l3.Padding = UDim.new(0, 6); local mBtn = Instance.new("TextButton"); mBtn.Parent = sidebar; mBtn.Position = UDim2.new(0, 10, 0, 75); mBtn.Size = UDim2.new(0, 120, 0, 30); mBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 45); mBtn.Font = Enum.Font.SourceSansBold; mBtn.Text = "🏠 Main"; mBtn.TextColor3 = Color3.fromRGB(255, 255, 255); mBtn.TextSize = 13; Instance.new("UICorner", mBtn).CornerRadius = UDim.new(0, 5); local aBtn = Instance.new("TextButton"); aBtn.Parent = sidebar; aBtn.Position = UDim2.new(0, 10, 0, 115); aBtn.Size = UDim2.new(0, 120, 0, 30); aBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30); aBtn.Font = Enum.Font.SourceSansBold; aBtn.Text = "🎯 Aim & ESP"; aBtn.TextColor3 = Color3.fromRGB(200, 200, 200); aBtn.TextSize = 13; Instance.new("UICorner", aBtn).CornerRadius = UDim.new(0, 5); local sBtn = Instance.new("TextButton"); sBtn.Parent = sidebar; sBtn.Position = UDim2.new(0, 10, 0, 155); sBtn.Size = UDim2.new(0, 120, 0, 30); sBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30); sBtn.Font = Enum.Font.SourceSansBold; sBtn.Text = "⚙️ Settings"; sBtn.TextColor3 = Color3.fromRGB(200, 200, 200); sBtn.TextSize = 13; Instance.new("UICorner", sBtn).CornerRadius = UDim.new(0, 5); mBtn.MouseButton1Click:Connect(function() mainContent.Visible = true; aimContent.Visible = false; settingsContent.Visible = false; mBtn.BackgroundColor3 = Color3.fromRGB(45,45,45); aBtn.BackgroundColor3 = Color3.fromRGB(30,30,30); sBtn.BackgroundColor3 = Color3.fromRGB(30,30,30); end); aBtn.MouseButton1Click:Connect(function() mainContent.Visible = false; aimContent.Visible = true; settingsContent.Visible = false; mBtn.BackgroundColor3 = Color3.fromRGB(30,30,30); aBtn.BackgroundColor3 = Color3.fromRGB(45,45,45); sBtn.BackgroundColor3 = Color3.fromRGB(30,30,30); end); sBtn.MouseButton1Click:Connect(function() mainContent.Visible = false; aimContent.Visible = false; settingsContent.Visible = true; mBtn.BackgroundColor3 = Color3.fromRGB(30,30,30); aBtn.BackgroundColor3 = Color3.fromRGB(30,30,30); sBtn.BackgroundColor3 = Color3.fromRGB(45,45,45); end); local function CreateBtn(pnt, txt, bg) local b = Instance.new("TextButton"); b.Parent = pnt; b.Size = UDim2.new(0, 295, 0, 38); b.BackgroundColor3 = bg; b.Font = Enum.Font.SourceSansBold; b.Text = txt; b.TextColor3 = Color3.fromRGB(255, 255, 255); b.TextSize = 14; Instance.new("UICorner", b).CornerRadius = UDim.new(0, 6); return b; end; local function CreateSlider(pnt, labelTxt, min, max, default, callback) local f = Instance.new("Frame"); f.Parent = pnt; f.Size = UDim2.new(0, 295, 0, 45); f.BackgroundColor3 = Color3.fromRGB(35, 35, 35); Instance.new("UICorner", f).CornerRadius = UDim.new(0, 6); local lbl = Instance.new("TextLabel"); lbl.Parent = f; lbl.BackgroundTransparency = 1; lbl.Position = UDim2.new(0, 10, 0, 2); lbl.Size = UDim2.new(0, 200, 0, 20); lbl.Font = Enum.Font.SourceSansBold; lbl.Text = labelTxt .. ": " .. default; lbl.TextColor3 = Color3.fromRGB(255, 255, 255); lbl.TextSize = 13; lbl.TextXAlignment = Enum.TextXAlignment.Left; local box = Instance.new("TextBox"); box.Parent = f; box.Position = UDim2.new(0, 240, 0, 4); box.Size = UDim2.new(0, 45, 0, 18); box.BackgroundColor3 = Color3.fromRGB(20, 20, 20); box.Font = Enum.Font.SourceSansBold; box.Text = tostring(default); box.TextColor3 = Color3.fromRGB(255, 190, 0); box.TextSize = 12; Instance.new("UICorner", box).CornerRadius = UDim.new(0, 4); local bar = Instance.new("Frame"); bar.Parent = f; bar.Position = UDim2.new(0, 10, 0, 28); bar.Size = UDim2.new(0, 275, 0, 6); bar.BackgroundColor3 = Color3.fromRGB(50, 50, 50); Instance.new("UICorner", bar).CornerRadius = UDim.new(0, 3); local fill = Instance.new("Frame"); fill.Parent = bar; fill.Size = UDim2.new((default - min) / (max - min), 0, 1, 0); fill.BackgroundColor3 = Color3.fromRGB(255, 190, 0); Instance.new("UICorner", fill).CornerRadius = UDim.new(0, 3); local function update(val) val = math.clamp(val, min, max); lbl.Text = labelTxt .. ": " .. math.floor(val); box.Text = tostring(math.floor(val)); fill.Size = UDim2.new((val - min) / (max - min), 0, 1, 0); callback(val); end; box.FocusLost:Connect(function() local num = tonumber(box.Text); if num then update(num); else box.Text = tostring(min); update(min); end; end); local active = false; bar.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then active = true; local p = math.clamp((input.Position.X - bar.AbsolutePosition.X) / bar.AbsoluteSize.X, 0, 1); update(min + p * (max - min)); end; end); game:GetService("UserInputService").InputChanged:Connect(function(input) if active and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then local p = math.clamp((input.Position.X - bar.AbsolutePosition.X) / bar.AbsoluteSize.X, 0, 1); update(min + p * (max - min)); end; end); game:GetService("UserInputService").InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then active = false; end; end); end; CreateSlider(mainContent, "Speed (Yurume Hizi)", 16, 500, 16, function(v) local hum = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid"); if hum then hum.WalkSpeed = v; end; end); CreateSlider(mainContent, "JumpHeight (Ziplama Yuksekligi)", 7, 200, 7, function(v) local hum = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid"); if hum then if hum.UseJumpPower then hum.UseJumpPower = false; end; hum.JumpHeight = v; end; end); local tb = CreateBtn(mainContent, "📍 Koordinat Kaydet / TP Yap", Color3.fromRGB(35, 35, 35)); local aimb = CreateBtn(aimContent, "🎯 Aim Bot (Otomatik Nisan) [Kapali]", Color3.fromRGB(35, 35, 35)); local espb = CreateBtn(aimContent, "👁️ Name ESP (Isimleri Goster) [Kapali]", Color3.fromRGB(35, 35, 35)); local fb = CreateBtn(settingsContent, "💡 FullBright (Haritayi Aydınlat)", Color3.fromRGB(35, 35, 35)); local lb = CreateBtn(settingsContent, "📱 Lag Fix (Kasma Azalt)", Color3.fromRGB(35, 35, 35)); local wpb = CreateBtn(settingsContent, "🔗 WhatsApp Grubunu Kopyala", Color3.fromRGB(255, 190, 0)); wpb.TextColor3 = Color3.fromRGB(0, 0, 0); local tog = Instance.new("TextButton"); tog.Name = "ToggleButton"; tog.Parent = sg; tog.BackgroundColor3 = Color3.fromRGB(35, 35, 35); tog.BackgroundTransparency = 0.2; tog.Position = UDim2.new(0.60, 0, 0.02, 0); tog.Size = UDim2.new(0, 100, 0, 35); tog.Font = Enum.Font.SourceSansBold; tog.Text = "RobloxTR"; tog.TextColor3 = Color3.fromRGB(255, 190, 0); tog.TextSize = 16; Instance.new("UICorner", tog).CornerRadius = UDim.new(0, 8); local stroke = Instance.new("UIStroke", tog); stroke.Color = Color3.fromRGB(255, 190, 0); stroke.Thickness = 1; tog.MouseButton1Click:Connect(function() mf.Visible = not mf.Visible; end); cb.MouseButton1Click:Connect(function() mf.Visible = false; end); local function MakeDraggable(f) local s, iPos, sPos; f.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then s = true; iPos = input.Position; sPos = f.Position; input.Changed:Connect(function() if input.UserInputState == Enum.UserInputState.End then s = false; end; end); end; end); f.InputChanged:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then if s then local delta = input.Position - iPos; f.Position = UDim2.new(sPos.X.Scale, sPos.X.Offset + delta.X, sPos.Y.Scale, sPos.Y.Offset + delta.Y); end; end; end); end; MakeDraggable(tog); MakeDraggable(mf); local sX, sY, sZ = 0, 0, 0; local saved = false; tb.MouseButton1Click:Connect(function() local root = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart"); if root then if not saved then local pos = root.Position; sX, sY, sZ = pos.X, pos.Y, pos.Z; saved = true; tb.Text = "Konuma Isinlanmak Icin Bas"; tb.BackgroundColor3 = Color3.fromRGB(0, 120, 200); else task.wait(3); root.CFrame = CFrame.new(sX, sY, sZ); saved = false; tb.Text = "Koordinat Kaydet / TP Yap"; tb.BackgroundColor3 = Color3.fromRGB(35, 35, 35); end; end; end); local fTog = false; fb.MouseButton1Click:Connect(function() fTog = not fTog; game:GetService("Lighting").Ambient = fTog and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(130, 130, 130); fb.Text = fTog and "FullBright Aktif" or "FullBright (Haritayi Aydinlat)"; fb.BackgroundColor3 = fTog and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(35, 35, 35); end); lb.MouseButton1Click:Connect(function() for i, v in pairs(game:GetDescendants()) do if v:IsA("Part") or v:IsA("UnionOperation") then v.Material = Enum.Material.SmoothPlastic; end; end; lb.Text = "Cihaz Optimize Edildi!"; lb.BackgroundColor3 = Color3.fromRGB(0, 150, 0); end); wpb.MouseButton1Click:Connect(function() setclipboard("bit.ly/robloxturkiye"); end); local aimTog = false; local aimConn; aimb.MouseButton1Click:Connect(function() aimTog = not aimTog; aimb.Text = aimTog and "🎯 Aim Bot [Aktif]" or "🎯 Aim Bot (Otomatik Nisan) [Kapali]"; aimb.BackgroundColor3 = aimTog and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(35, 35, 35); if aimTog then aimConn = game:GetService("RunService").RenderStepped:Connect(function() local target = nil; local maxDist = math.huge; for _, plr in pairs(game.Players:GetPlayers()) do if plr ~= game.Players.LocalPlayer and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") and plr.Character:FindFirstChild("Humanoid") and plr.Character.Humanoid.Health > 0 then local dist = (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - plr.Character.HumanoidRootPart.Position).Magnitude; if dist < maxDist then maxDist = dist; target = plr.Character.HumanoidRootPart; end; end; end; if target then workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, target.Position); end; end); else if aimConn then aimConn:Disconnect(); end; end; end); local espTog = false; espb.MouseButton1Click:Connect(function() espTog = not espTog; espb.Text = espTog and "👁️ Name ESP [Aktif]" or "👁️ Name ESP (Isimleri Goster) [Kapali]"; espb.BackgroundColor3 = espTog and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(35, 35, 35); local function addEsp(plr) if plr == game.Players.LocalPlayer then return end; local function create() if not espTog then return end; local char = plr.Character; if char and char:WaitForChild("Head") and not char.Head:FindFirstChild("TR_ESP") then local bb = Instance.new("BillboardGui"); bb.Name = "TR_ESP"; bb.AlwaysOnTop = true; bb.Size = UDim2.new(0, 200, 0, 50); bb.StudsOffset = Vector3.new(0, 3, 0); bb.Parent = char.Head; local tl = Instance.new("TextLabel"); tl.Parent = bb; tl.BackgroundTransparency = 1; tl.Size = UDim2.new(1, 0, 1, 0); tl.Font = Enum.Font.SourceSansBold; tl.TextColor3 = Color3.fromRGB(255, 50, 50); tl.TextSize = 14; game:GetService("RunService").RenderStepped:Connect(function() if char and char:FindFirstChild("HumanoidRootPart") and tl.Parent then local dist = math.floor((game.Players.LocalPlayer.Character.HumanoidRootPart.Position - char.HumanoidRootPart.Position).Magnitude); tl.Text = plr.Name .. " [" .. dist .. "m]"; else tl:Destroy(); end; end); end; end; plr.CharacterAdded:Connect(create); create(); end; if espTog then for _, p in pairs(game.Players:GetPlayers()) do addEsp(p); end; game.Players.PlayerAdded:Connect(addEsp); else for _, p in pairs(game.Players:GetPlayers()) do if p.Character and p.Character:FindFirstChild("Head") and p.Character.Head:FindFirstChild("TR_ESP") then p.Character.Head.TR_ESP:Destroy(); end; end; end; end);
+-- ROBLOXTR PREMIUM PANEL (v1.0) - Optimised & Compressed
+local Player = game:GetService("Players").LocalPlayer
+local CoreGui = game:GetService("CoreGui")
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+
+-- Eski Panelleri Temizle
+if CoreGui:FindFirstChild("RobloxTR_PremiumPanel") then CoreGui["RobloxTR_PremiumPanel"]:Destroy() end
+
+-- Ana Ekran (ScreenGui)
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "RobloxTR_PremiumPanel"
+ScreenGui.Parent = CoreGui
+ScreenGui.ResetOnSpawn = false
+
+-- 🔵 ÖZEL GRUP LOGOLU AÇILIŞ BUTONU (Daire Şeklinde)
+local OpenButton = Instance.new("ImageButton")
+OpenButton.Name = "LogoToggleButton"
+OpenButton.Parent = ScreenGui
+OpenButton.Size = UDim2.new(0, 65, 0, 65)
+OpenButton.Position = UDim2.new(0, 20, 0, 150)
+OpenButton.Image = "rbxassetid://95571728354389" -- Senin Grubunun Orijinal Logosu!
+OpenButton.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
+OpenButton.BorderSizePixel = 0
+
+local UICornerLogo = Instance.new("UICorner")
+UICornerLogo.CornerRadius = UDim.new(1, 0)
+UICornerLogo.Parent = OpenButton
+
+-- 📱 ANA PANEL ÇERÇEVESİ
+local MainFrame = Instance.new("Frame")
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = ScreenGui
+MainFrame.Size = UDim2.new(0, 580, 0, 340)
+MainFrame.Position = UDim2.new(0.5, -290, 0.5, -170)
+MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+MainFrame.BorderSizePixel = 0
+MainFrame.Visible = false
+
+local UICornerPanel = Instance.new("UICorner")
+UICornerPanel.CornerRadius = UDim.new(0, 12)
+UICornerPanel.Parent = MainFrame
+
+-- Üst Başlık Çubuğu
+local TitleBar = Instance.new("TextLabel")
+TitleBar.Size = UDim2.new(1, 0, 0, 40)
+TitleBar.BackgroundColor3 = Color3.fromRGB(32, 32, 40)
+TitleBar.Text = "ANIMASYONLAR VE GELISTIRILMIS AYARLAR"
+TitleBar.TextColor3 = Color3.fromRGB(255, 255, 255)
+TitleBar.Font = Enum.Font.GothamBold
+TitleBar.TextSize = 15
+TitleBar.Parent = MainFrame
+
+local UICornerTitle = Instance.new("UICorner")
+UICornerTitle.CornerRadius = UDim.new(0, 12)
+UICornerTitle.Parent = TitleBar
+
+-- Kapatma Menüsü Tuşu (X)
+local CloseX = Instance.new("TextButton")
+CloseX.Size = UDim2.new(0, 35, 0, 30)
+CloseX.Position = UDim2.new(1, -45, 0, 5)
+CloseX.BackgroundColor3 = Color3.fromRGB(180, 40, 40)
+CloseX.Text = "X"
+CloseX.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseX.Font = Enum.Font.GothamBold
+CloseX.TextSize = 14
+CloseX.Parent = MainFrame
+local UICornerX = Instance.new("UICorner")
+UICornerX.CornerRadius = UDim.new(0, 6)
+UICornerX.Parent = CloseX
+CloseX.MouseButton1Click:Connect(function() MainFrame.Visible = false end)
+
+-- Alt Menü Sekme Çubuğu (Tabs)
+local TabBar = Instance.new("Frame")
+TabBar.Size = UDim2.new(1, 0, 0, 40)
+TabBar.Position = UDim2.new(0, 0, 1, -40)
+TabBar.BackgroundColor3 = Color3.fromRGB(28, 28, 35)
+TabBar.Parent = MainFrame
+
+-- 📂 SAYFALARI OLUŞTURMA (Container)
+local PageContainer = Instance.new("Frame")
+PageContainer.Size = UDim2.new(1, 0, 1, -80)
+PageContainer.Position = UDim2.new(0, 0, 0, 40)
+PageContainer.BackgroundTransparency = 1
+PageContainer.Parent = MainFrame
+
+local Pages = {}
+local function createPage(name)
+    local f = Instance.new("ScrollingFrame")
+    f.Size = UDim2.new(1, -20, 1, -20)
+    f.Position = UDim2.new(0, 10, 0, 10)
+    f.BackgroundTransparency = 1
+    f.CanvasSize = UDim2.new(0, 0, 2, 0)
+    f.ScrollBarThickness = 4
+    f.Visible = false
+    f.Parent = PageContainer
+    local layout = Instance.new("UIListLayout")
+    layout.Parent = f
+    layout.Padding = UDim.new(0, 8)
+    Pages[name] = f
+    return f
+end
+
+local animPage = createPage("Animasyonlar")
+local flyPage = createPage("Uçuş & TP")
+local espPage = createPage("ESP Menü")
+Pages["Animasyonlar"].Visible = true
+
+-- 📑 Sekme Değiştirme Buton Fonksiyonu
+local function addTabButton(text, targetPage, posX)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(0.3, 0, 1, 0)
+    btn.Position = UDim2.new(posX, 0, 0, 0)
+    btn.BackgroundTransparency = 1
+    btn.Text = text:upper()
+    btn.TextColor3 = Color3.fromRGB(180, 180, 180)
+    btn.Font = Enum.Font.GothamBold
+    btn.TextSize = 12
+    btn.Parent = TabBar
+    
+    btn.MouseButton1Click:Connect(function()
+        for _, p in pairs(Pages) do p.Visible = false end
+        targetPage.Visible = true
+    end)
+end
+addTabButton("Animasyonlar", animPage, 0.02)
+addTabButton("Uçuş & TP", flyPage, 0.35)
+addTabButton("ESP Ayarları", espPage, 0.68)
+
+-- 🖱️ SÜRÜKLENEBİLİR (DRAG) YAPMA FONKSİYONU
+local function makeDraggable(frame, target)
+    target = target or frame
+    local dragging, dragInput, dragStart, startPos
+    frame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true; dragStart = input.Position; startPos = target.Position
+            input.Changed:Connect(function() if input.UserInputState == Enum.UserInputState.End then dragging = false end end)
+        end
+    end)
+    frame.InputChanged:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then dragInput = input end end)
+    UserInputService.InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            local delta = input.Position - dragStart
+            target.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
+end
+makeDraggable(TitleBar, MainFrame)
+makeDraggable(OpenButton)
+
+OpenButton.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
+
+-- ==========================================
+-- 🕺 1. SEKME: 10'LU POPÜLER ANİMASYONLAR MENÜSÜ
+-- ==========================================
+local function playEmote(id)
+    local char = Player.Character or Player.CharacterAdded:Wait()
+    local hum = char:FindFirstChildOfClass("Humanoid")
+    if hum then
+        local anim = Instance.new("Animation")
+        anim.AnimationId = "rbxassetid://"..id
+        local track = hum:LoadAnimation(anim)
+        track:Play()
+    end
+end
+
+local emotes = {
+    {name = "Twerk (Eğlence)", id = "4090534224"},
+    {name = "Gölge Boksu (Shadow Boxing)", id = "14884033325"},
+    {name = "Parande / Arka Takla", id = "251010640"},
+    {name = "Zombi Yürüyüşü", id = "616159670"},
+    {name = "Ninja Koşusu", id = "656118341"},
+    {name = "Askeri Selam Durma", id = "3338399557"},
+    {name = "Yere Yatıp Şınav Çekme", id = "4682417215"},
+    {name = "Çılgın Hip-Hop Dansı", id = "507771019"},
+    {name = "Süper Kahraman İnişi", id = "10920935574"},
+    {name = "Breakdance Şov", id = "507772626"}
+}
+
+for _, emo in ipairs(emotes) do
+    local b = Instance.new("TextButton")
+    b.Size = UDim2.new(1, -10, 0, 35)
+    b.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+    b.Text = emo.name
+    b.TextColor3 = Color3.fromRGB(230, 230, 230)
+    b.Font = Enum.Font.Gotham
+    b.TextSize = 13
+    b.Parent = animPage
+    local c = Instance.new("UICorner") c.CornerRadius = UDim.new(0, 6) c.Parent = b
+    b.MouseButton1Click:Connect(function() playEmote(emo.id) end)
+end
+
+-- ==========================================
+-- ✈️ 2. SEKME: GELİŞMİŞ UÇUŞ (FLY) VE SÜRELİ TP
+-- ==========================================
+local flySpeed = 50
+local flying = false
+local flyConnection
+
+-- Uçuş Durumu Ekranda Anlık Bilgi Paneli (Resimdeki gibi)
+local StatusLabel = Instance.new("TextLabel")
+StatusLabel.Size = UDim2.new(1, -10, 0, 45)
+StatusLabel.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
+StatusLabel.Text = "UCUS DURUMU: GROUNDED\nHIZ: 50 | TAKVIYE: KAPALI"
+StatusLabel.TextColor3 = Color3.fromRGB(150, 255, 150)
+StatusLabel.Font = Enum.Font.Code
+StatusLabel.TextSize = 12
+StatusLabel.Parent = flyPage
+
+local function toggleFly()
+    local char = Player.Character or Player.CharacterAdded:Wait()
+    local root = char:FindFirstChild("HumanoidRootPart")
+    if not root then return end
+    flying = not flying
+    if flying then
+        StatusLabel.Text = "UCUS DURUMU: FLYING\nHIZ: "..flySpeed.." | TAKVIYE: AKTIF"
+        StatusLabel.TextColor3 = Color3.fromRGB(255, 100, 100)
+        local bg = Instance.new("BodyGyro", root) bg.P = 9e4 bg.maxTorque = Vector3.new(9e9, 9e9, 9e9) bg.cframe = root.CFrame
+        local bv = Instance.new("BodyVelocity", root) bv.velocity = Vector3.new(0,0.1,0) bv.maxForce = Vector3.new(9e9, 9e9, 9e9)
+        flyConnection = RunService.RenderStepped:Connect(function()
+            local cam = workspace.CurrentCamera
+            local velocity = Vector3.new(0,0,0)
+            -- Basit yön takibi (Delta mobil buton uyumlu)
+            bv.velocity = cam.CFrame.LookVector * flySpeed
+            bg.cframe = cam.CFrame
+        end)
+    else
+        StatusLabel.Text = "UCUS DURUMU: GROUNDED\nHIZ: "..flySpeed.." | TAKVIYE: KAPALI"
+        StatusLabel.TextColor3 = Color3.fromRGB(150, 255, 150)
+        if flyConnection then flyConnection:Disconnect() end
+        if root:FindFirstChild("BodyGyro") then root.BodyGyro:Destroy() end
+        if root:FindFirstChild("BodyVelocity") then root.BodyVelocity:Destroy() end
+    end
+end
+
+local FlyBtn = Instance.new("TextButton")
+FlyBtn.Size = UDim2.new(1, -10, 0, 35)
+FlyBtn.BackgroundColor3 = Color3.fromRGB(40, 50, 70)
+FlyBtn.Text = "UÇUŞU AÇ / KAPAT (FLY)"
+FlyBtn.TextColor3 = Color3.fromRGB(255,255,255)
+FlyBtn.Font = Enum.Font.GothamBold
+FlyBtn.Parent = flyPage
+local c = Instance.new("UICorner") c.CornerRadius = UDim.new(0, 6) c.Parent = FlyBtn
+FlyBtn.MouseButton1Click:Connect(toggleFly)
+
+-- Süreli TP Arayüzü (Metin Giriş Kutusu)
+local TimeInput = Instance.new("TextBox")
+TimeInput.Size = UDim2.new(1, -10, 0, 35)
+TimeInput.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+TimeInput.PlaceholderText = "Süreli TP Aralığı Yazın (Saniye Örn: 0.5)"
+TimeInput.Text = "1"
+TimeInput.TextColor3 = Color3.fromRGB(255,255,255)
+TimeInput.Font = Enum.Font.Gotham
