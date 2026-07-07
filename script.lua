@@ -1,21 +1,17 @@
---ROBLOXTR PREMIUM PANEL (v3.0) - Optimize
-local Players = game:GetService("Players")
-local CoreGui = game:GetService("CoreGui")
-local TweenService = game:GetService("TweenService")
-local UserInputService = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
+-- ROBLOXTR PREMIUM PANEL (v3.0) - Loadstring Loader
+-- Bu kod asıl büyük paneli GitHub üzerinden güvenli bir şekilde çeker.
 
---Eski Panelleri Temizle
-if CoreGui:FindFirstChild("RobloxTR_PremiumPanel") then
-    CoreGui:FindFirstChild("RobloxTR_PremiumPanel"):Destroy()
+local success, result = pcall(function()
+    return game:HttpGet("https://githubusercontent.com")
+end)
+
+if success and result then
+    local executable, err = loadstring(result)
+    if executable then
+        executable()
+    else
+        warn("Kod yuklenirken bir mantik hatasi olustu: ", err)
+    end
+else
+    warn("GitHub sunucusuna baglanilamadi veya dosya yolu hatali!")
 end
-
---Ana Ekran (ScreenGui)
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "RobloxTR_PremiumPanel"
-ScreenGui.Parent = CoreGui
-ScreenGui.ResetOnSpawn = false
-
--- ÖZEL GRUP LOGOLU AÇILIŞ BUTONU (Daire)
-local OpenButton = Instance.new("ImageButton")
-OpenButton.Name = "LogoToggleButton"
