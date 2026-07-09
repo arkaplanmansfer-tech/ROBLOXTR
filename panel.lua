@@ -1,194 +1,246 @@
 -- =============================================================================
--- ROBLOXTR PREMIUM PANEL (v3.0) - TAM VE ÇALIŞAN SÜRÜM
+-- ROBLOXTR PREMIUM PANEL (v3.1) - MANSUROV & ORİJİNAL GELİŞMİŞ SÜRÜM
 -- =============================================================================
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
+local Lighting = game:GetService("Lighting")
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 
--- Eski Panelleri Temizle
+-- Eski Panelleri PlayerGui Üzerinden Temizle
 if PlayerGui:FindFirstChild("RobloxTR_PremiumPanel") then
     PlayerGui:FindFirstChild("RobloxTR_PremiumPanel"):Destroy()
 end
 
--- ANA EKRAN (ScreenGui)
+-- ANA EKRAN (ResetOnSpawn = false yapılarak ölünce silinmesi engellendi)
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "RobloxTR_PremiumPanel"
 ScreenGui.Parent = PlayerGui
 ScreenGui.ResetOnSpawn = false
 
--- MODERN ANA PANEL ÇERÇEVESİ
+-- ARKA PLAN ÇERÇEVESİ (Klasik v2.2 Köşeli Kutu Tasarımı)
 local MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainFrame"
 MainFrame.Parent = ScreenGui
-MainFrame.Size = UDim2.new(0, 480, 0, 360)
-MainFrame.Position = UDim2.new(0.5, -240, 0.5, -180)
-MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
-MainFrame.BorderSizePixel = 0
-MainFrame.Visible = true -- PANELİ GÖRÜNÜR YAPTIK
+MainFrame.Size = UDim2.new(0, 360, 0, 440)
+MainFrame.Position = UDim2.new(0.5, -180, 0.5, -220)
+MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+MainFrame.BorderSizePixel = 2
+MainFrame.BorderColor3 = Color3.fromRGB(0, 170, 255)
+MainFrame.Visible = true
 
-local MainCorner = Instance.new("UICorner")
-MainCorner.CornerRadius = UDim.new(0, 12)
-MainCorner.Parent = MainFrame
+-- BAŞLIK
+local Title = Instance.new("TextLabel")
+Title.Name = "Title"
+Title.Parent = MainFrame
+Title.Size = UDim2.new(1, 0, 0, 40)
+Title.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
+Title.Text = "⚡ ROBLOXTR PREMIUM PANEL v3.1"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.Font = Enum.Font.SourceSansBold
+Title.TextSize = 18
 
-local UIStroke = Instance.new("UIStroke")
-UIStroke.Color = Color3.fromRGB(0, 170, 255)
-UIStroke.Thickness = 1.5
-UIStroke.Parent = MainFrame
+-- KAYDIRILABİLİR BUTON LİSTESİ
+local ButtonList = Instance.new("ScrollingFrame")
+ButtonList.Name = "ButtonList"
+ButtonList.Parent = MainFrame
+ButtonList.Size = UDim2.new(1, -20, 1, -50)
+ButtonList.Position = UDim2.new(0, 10, 0, 45)
+ButtonList.BackgroundTransparency = 1
+ButtonList.CanvasSize = UDim2.new(0, 0, 3, 0)
+ButtonList.ScrollBarThickness = 6
 
--- ÜST BAŞLIK BAR
-local TitleBar = Instance.new("Frame")
-TitleBar.Size = UDim2.new(1, 0, 0, 45)
-TitleBar.BackgroundColor3 = Color3.fromRGB(22, 22, 30)
-TitleBar.BorderSizePixel = 0
-TitleBar.Parent = MainFrame
+local UIListLayout = Instance.new("UIListLayout")
+UIListLayout.Parent = ButtonList
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+UIListLayout.Padding = UDim.new(0, 10)
 
-local TitleCorner = Instance.new("UICorner")
-TitleCorner.CornerRadius = UDim.new(0, 12)
-TitleCorner.Parent = TitleBar
-
-local TitleText = Instance.new("TextLabel")
-TitleText.Size = UDim2.new(1, -40, 1, 0)
-TitleText.Position = UDim2.new(0, 15, 0, 0)
-TitleText.BackgroundTransparency = 1
-TitleText.Text = "⚡ ROBLOXTR PREMIUM PANEL v3.0"
-TitleText.TextColor3 = Color3.fromRGB(255, 255, 255)
-TitleText.Font = Enum.Font.GothamBold
-TitleText.TextSize = 16
-TitleText.TextXAlignment = Enum.TextXAlignment.Left
-TitleText.Parent = TitleBar
-
--- SEKME MENÜSÜ
-local TabContainer = Instance.new("Frame")
-TabContainer.Size = UDim2.new(0, 130, 1, -45)
-TabContainer.Position = UDim2.new(0, 0, 0, 45)
-TabContainer.BackgroundColor3 = Color3.fromRGB(18, 18, 24)
-TabContainer.BorderSizePixel = 0
-TabContainer.Parent = MainFrame
-
-local TabLayout = Instance.new("UIListLayout")
-TabLayout.Padding = UDim.new(0, 5)
-TabLayout.Parent = TabContainer
-
--- İÇERİK ALANI
-local ContentContainer = Instance.new("Frame")
-ContentContainer.Size = UDim2.new(1, -140, 1, -55)
-ContentContainer.Position = UDim2.new(0, 135, 0, 50)
-ContentContainer.BackgroundTransparency = 1
-ContentContainer.Parent = MainFrame
-
--- SEKMELERİ OLUŞTURMA
-local tabs = {}
-local function createTab(tabName)
-    local tabBtn = Instance.new("TextButton")
-    tabBtn.Size = UDim2.new(1, -10, 0, 35)
-    tabBtn.BackgroundColor3 = Color3.fromRGB(28, 28, 38)
-    tabBtn.Text = tabName
-    tabBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
-    tabBtn.Font = Enum.Font.GothamSemibold
-    tabBtn.TextSize = 13
-    tabBtn.Parent = TabContainer
+-- AYARLANABİLİR SLIDER SİSTEMİ (0-200 Arası Hız ve Zıplama İçin)
+local function createSlider(titleText, min, max, default, callback)
+    local sliderFrame = Instance.new("Frame")
+    sliderFrame.Size = UDim2.new(1, 0, 0, 50)
+    sliderFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 40)
+    sliderFrame.BorderSizePixel = 0
+    sliderFrame.Parent = ButtonList
     
-    local c = Instance.new("UICorner")
-    c.CornerRadius = UDim.new(0, 6)
-    c.Parent = tabBtn
+    local label = Instance.new("TextLabel")
+    label.Size = UDim2.new(1, 0, 0, 20)
+    label.Position = UDim2.new(0, 10, 0, 2)
+    label.BackgroundTransparency = 1
+    label.Text = titleText .. ": " .. tostring(default)
+    label.TextColor3 = Color3.fromRGB(255, 255, 255)
+    label.Font = Enum.Font.SourceSansBold
+    label.TextSize = 14
+    label.TextXAlignment = Enum.TextXAlignment.Left
+    label.Parent = sliderFrame
     
-    local page = Instance.new("ScrollingFrame")
-    page.Size = UDim2.new(1, 0, 1, 0)
-    page.BackgroundTransparency = 1
-    page.Visible = false
-    page.CanvasSize = UDim2.new(0, 0, 1.5, 0)
-    page.ScrollBarThickness = 4
-    page.Parent = ContentContainer
+    local bar = Instance.new("Frame")
+    bar.Size = UDim2.new(1, -40, 0, 8)
+    bar.Position = UDim2.new(0, 20, 0, 28)
+    bar.BackgroundColor3 = Color3.fromRGB(60, 60, 65)
+    bar.BorderSizePixel = 0
+    bar.Parent = sliderFrame
     
-    local pLayout = Instance.new("UIListLayout")
-    pLayout.Padding = UDim.new(0, 8)
-    pLayout.Parent = page
+    local fill = Instance.new("Frame")
+    fill.Size = UDim2.new((default - min) / (max - min), 0, 1, 0)
+    fill.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+    fill.BorderSizePixel = 0
+    fill.Parent = bar
     
-    tabBtn.MouseButton1Click:Connect(function()
-        for _, t in pairs(tabs) do
-            t.page.Visible = false
-            t.btn.BackgroundColor3 = Color3.fromRGB(28, 28, 38)
+    local trigger = Instance.new("TextButton")
+    trigger.Size = UDim2.new(1, 0, 1, 0)
+    trigger.BackgroundTransparency = 1
+    trigger.Text = ""
+    trigger.Parent = bar
+    
+    local function update(input)
+        local percentage = math.clamp((input.Position.X - bar.AbsolutePosition.X) / bar.AbsoluteSize.X, 0, 1)
+        fill.Size = UDim2.new(percentage, 0, 1, 0)
+        local value = math.floor(min + (percentage * (max - min)))
+        label.Text = titleText .. ": " .. tostring(value)
+        callback(value)
+    end
+    
+    local sliding = false
+    trigger.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            sliding = true
+            update(input)
         end
-        page.Visible = true
-        tabBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
     end)
-    
-    table.insert(tabs, {btn = tabBtn, page = page})
-    return page
+    trigger.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            sliding = false
+        end
+    end)
+    UserInputService.InputChanged:Connect(function(input)
+        if sliding and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+            update(input)
+        end
+    end)
 end
 
-local mainPage = createTab("👤 Oyuncu")
-local espPage = createTab("👁️ ESP")
-local tpPage = createTab("📍 Işınlanma")
-
-tabs[1].page.Visible = true
-tabs[1].btn.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
-
-local function addBtn(parent, text, callback)
+-- NORMAL BUTON OLUŞTURUCU
+local function createFeatureButton(name, callback)
     local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(1, -5, 0, 38)
-    btn.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-    btn.Text = text
-    btn.TextColor3 = Color3.fromRGB(240, 240, 240)
-    btn.Font = Enum.Font.Gotham
-    btn.TextSize = 14
-    btn.Parent = parent
-    local c = Instance.new("UICorner")
-    c.CornerRadius = UDim.new(0, 6)
-    c.Parent = btn
-    btn.MouseButton1Click:Connect(callback)
+    btn.Size = UDim2.new(1, 0, 0, 38)
+    btn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    btn.Text = name
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.Font = Enum.Font.SourceSansBold
+    btn.TextSize = 16
+    btn.Parent = ButtonList
+    
+    btn.MouseButton1Click:Connect(function() callback(btn) end)
     return btn
 end
 
--- OYUNCU ÖZELLİKLERİ
-addBtn(mainPage, "Hız (WalkSpeed 75)", function()
-    LocalPlayer.Character.Humanoid.WalkSpeed = 75
+-- =============================================================================
+-- v3.1 YENİ ÖZELLİKLER LİSTESİ
+-- =============================================================================
+
+-- 1. ÖZELLİK: WalkSpeed Slider (0-200)
+createSlider("👟 Koşu Hızı (WalkSpeed)", 0, 200, 16, function(value)
+    if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
+        LocalPlayer.Character.Humanoid.WalkSpeed = value
+    end
 end)
 
-addBtn(mainPage, "Zıplama (JumpPower 120)", function()
-    LocalPlayer.Character.Humanoid.JumpPower = 120
+-- 2. ÖZELLİK: JumpPower Slider (0-200)
+createSlider("🦘 Zıplama Gücü (JumpPower)", 0, 200, 50, function(value)
+    if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
+        LocalPlayer.Character.Humanoid.JumpPower = value
+    end
 end)
 
--- IŞINLANMA SİSTEMİ
-addBtn(tpPage, "En Yakın Oyuncuya Git", function()
-    local closest = nil
-    local dist = math.huge
-    for _, p in pairs(Players:GetPlayers()) do
-        if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
-            local d = (LocalPlayer.Character.HumanoidRootPart.Position - p.Character.HumanoidRootPart.Position).Magnitude
-            if d < dist then
-                dist = d
-                closest = p
+-- 3. ÖZELLİK: Duvar İçinden Geçme (Noclip)
+local noclip = false
+createFeatureButton("🧱 Duvardan Geçme (Noclip): KAPALI", function(btn)
+    noclip = not noclip
+    btn.Text = noclip and "🧱 Duvardan Geçme (Noclip): AÇIK" or "🧱 Duvardan Geçme (Noclip): KAPALI"
+    btn.BackgroundColor3 = noclip and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(45, 45, 45)
+    RunService.Stepped:Connect(function()
+        if noclip and LocalPlayer.Character then
+            for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
+                if part:IsA("BasePart") then part.CanCollide = false end
             end
         end
+    end)
+end)
+
+-- 4. ÖZELLİK: Full ESP (Name, Chams, Tracks, Mesafe)
+local espActive = false
+local function applyESP(player)
+    if player == LocalPlayer then return end
+    local function drawVisuals(char)
+        local root = char:WaitForChild("HumanoidRootPart", 5)
+        if not root then return end
+        if espActive and not root:FindFirstChild("TR_Visuals") then
+            local bb = Instance.new("BillboardGui")
+            bb.Name = "TR_Visuals"
+            bb.Size = UDim2.new(0, 100, 0, 40)
+            bb.AlwaysOnTop = true
+            bb.ExtentsOffset = Vector3.new(0, 3, 0)
+            bb.Parent = root
+            
+            local txt = Instance.new("TextLabel")
+            txt.Size = UDim2.new(1, 0, 1, 0)
+            txt.BackgroundTransparency = 1
+            txt.TextColor3 = Color3.fromRGB(255, 0, 100)
+            txt.Font = Enum.Font.SourceSansBold
+            txt.TextSize = 14
+            txt.Parent = bb
+            
+            RunService.RenderStepped:Connect(function()
+                if root and root.Parent and txt and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                    local distance = math.floor((LocalPlayer.Character.HumanoidRootPart.Position - root.Position).Magnitude)
+                    txt.Text = player.Name .. " [" .. tostring(distance) .. "m]"
+                end
+            end)
+            
+            local highlight = Instance.new("Highlight")
+            highlight.Name = "TR_Chams"
+            highlight.FillColor = Color3.fromRGB(0, 170, 255)
+            highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+            highlight.Parent = char
+        end
     end
-    if closest then
-        LocalPlayer.Character.HumanoidRootPart.CFrame = closest.Character.HumanoidRootPart.CFrame
+    if player.Character then drawVisuals(player.Character) end
+    player.CharacterAdded:Connect(drawVisuals)
+end
+
+createFeatureButton("👁️ Gelişmiş Görüş (Full ESP & Chams)", function(btn)
+    espActive = not espActive
+    btn.Text = espActive and "👁️ Gelişmiş Görüş: AÇIK" or "👁️ Gelişmiş Görüş: KAPALI"
+    btn.BackgroundColor3 = espActive and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(45, 45, 45)
+    for _, p in pairs(Players:GetPlayers()) do applyESP(p) end
+end)
+
+-- 5. ÖZELLİK: FullBright (Harita Aydınlatma)
+local brightActive = false
+createFeatureButton("☀️ Harita Aydınlatma (FullBright): KAPALI", function(btn)
+    brightActive = not brightActive
+    btn.Text = brightActive and "☀️ Harita Aydınlatma (FullBright): AÇIK" or "☀️ Harita Aydınlatma (FullBright): KAPALI"
+    btn.BackgroundColor3 = brightActive and Color3.fromRGB(0, 170, 255) or Color3.fromRGB(45, 45, 45)
+    if brightActive then
+        Lighting.Brightness = 2
+        Lighting.ClockTime = 14
+        Lighting.Ambient = Color3.fromRGB(255, 255, 255)
+    else
+        Lighting.Brightness = 1
+        Lighting.ClockTime = 12
+        Lighting.Ambient = Color3.fromRGB(128, 128, 128)
     end
 end)
 
--- SÜRÜKLEME SİSTEMİ (Mobil/PC)
-local dragging, dragInput, dragStart, startPos
-MainFrame.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        dragging = true
-        dragStart = input.Position
-        startPos = MainFrame.Position
-    end
-end)
-UserInputService.InputChanged:Connect(function(input)
-    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-        local delta = input.Position - dragStart
-        MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-    end
-end)
-UserInputService.InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        dragging = false
-    end
-end)
-
-print("ROBLOXTR PREMIUM PANEL v3.0 Başarıyla Yüklendi!")
+-- 6. ÖZELLİK: Mansur'un İstediği FPS Boost Sitemi (Blok Pürüzleştirici)
+createFeatureButton("⚙️ FPS Boost (Kasmayı Engelle)", function(btn)
+    btn.Text = "FPS Yükseltildi (Pürüzsüz Mod)!"
+    btn.BackgroundColor3 = Color3.fromRGB(0, 200, 100)
+    for _, obj in pairs(workspace:GetDescendants()) do
+        if obj:IsA("BasePart") and not obj:IsA("MeshPart") then
+            obj.Material = Enum.Material.SmoothPlastic
+        elseif obj:IsA("Decal") or obj:IsA("Texture") then
+                
