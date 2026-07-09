@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROBLOXTR PREMIUM PANEL (v3.0) - GERÇEK VE GELİŞMİŞ SÜRÜM
+-- ROBLOXTR PREMIUM PANEL (v3.0) - GERÇEK VE GELİŞMİŞ SÜRÜM (Mobil Uyumlu)
 -- =============================================================================
 local Players = game:GetService("Players")
 local CoreGui = game:GetService("CoreGui")
@@ -8,15 +8,17 @@ local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
 
--- Eski Panelleri Temizle
-if CoreGui:FindFirstChild("RobloxTR_PremiumPanel") then
-    CoreGui:FindFirstChild("RobloxTR_PremiumPanel"):Destroy()
+-- [DÜZELTME 1] Eski Panelleri PlayerGui Üzerinden Temizleme Altyapısı
+local PlayerGui = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+if PlayerGui:FindFirstChild("RobloxTR_PremiumPanel") then
+    PlayerGui:FindFirstChild("RobloxTR_PremiumPanel"):Destroy()
 end
 
 -- ANA EKRAN (ScreenGui)
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "RobloxTR_PremiumPanel"
-ScreenGui.Parent = CoreGui
+-- [DÜZELTME 2] Parent Artık CoreGui Değil, PlayerGui Oldu
+ScreenGui.Parent = PlayerGui
 ScreenGui.ResetOnSpawn = false
 
 -- MODERN ANA PANEL ÇERÇEVESİ (Karanlık Tema & Neon Detaylı)
@@ -27,7 +29,8 @@ MainFrame.Size = UDim2.new(0, 480, 0, 360)
 MainFrame.Position = UDim2.new(0.5, -240, 0.5, -180)
 MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
 MainFrame.BorderSizePixel = 0
-MainFrame.Visible = false
+-- [DÜZELTME 3] Panel Başlangıçta Direkt Görünür Durumda Açılacak
+MainFrame.Visible = true
 
 local MainCorner = Instance.new("UICorner")
 MainCorner.CornerRadius = UDim.new(0, 12)
@@ -71,7 +74,7 @@ TabContainer.Parent = MainFrame
 
 local TabLayout = Instance.new("UIListLayout")
 TabLayout.Padding = UDim.new(0, 5)
-LayoutOrder = Enum.SortOrder.LayoutOrder
+TabLayout.SortOrder = Enum.SortOrder.LayoutOrder
 TabLayout.Parent = TabContainer
 
 -- İÇERİK ALANI (Sağ Panel)
@@ -130,8 +133,10 @@ local espPage = createTab("👁️ ESP / Görüş")
 local tpPage = createTab("📍 Işınlanma")
 local animPage = createTab("🎭 Animasyon")
 
+-- İlk sekmeyi varsayılan olarak aç
 tabs[1].page.Visible = true
 tabs[1].btn.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+tabs[1].btn.TextColor3 = Color3.fromRGB(255, 255, 255)
 
 -- ÖZELLİK BUTONU EKLEME FONKSİYONU
 local function addTrack(parent, text, callback)
@@ -146,7 +151,9 @@ local function addTrack(parent, text, callback)
     local c = Instance.new("UICorner")
     c.CornerRadius = UDim.new(0, 6)
     c.Parent = btn
-    btn.MouseButton1Click:Connect(callback)
+    btn.MouseButton1Click:Connect(function()
+        callback(btn)
+    end)
     return btn
 end
 
@@ -181,12 +188,10 @@ addTrack(mainPage, "Duvar İçinden Geçme (Noclip): KAPALI", function(btn)
 end)
 
 addTrack(mainPage, "Görünmezlik & Aydınlatma Fullle", function()
-    -- Aydınlatma (FullBright)
     game:GetService("Lighting").Brightness = 2
     game:GetService("Lighting").ClockTime = 14
     game:GetService("Lighting").Ambient = Color3.fromRGB(255, 255, 255)
     
-    -- Görünmezlik
     if LocalPlayer.Character then
         for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
             if part:IsA("BasePart") or part:IsA("Decal") then part.Transparency = 1 end
@@ -207,7 +212,6 @@ local function applyESP(player)
         local root = char:WaitForChild("HumanoidRootPart", 5)
         if not root then return end
         
-        -- Tracks & Mesafe Metni
         if espEnabled and not root:FindFirstChild("TR_Esp") then
             local bb = Instance.new("BillboardGui")
             bb.Name = "TR_Esp"
@@ -225,14 +229,13 @@ local function applyESP(player)
             txt.Parent = bb
             
             RunService.RenderStepped:Connect(function()
-                if root and root.Parent and txt then
+                if root and root.Parent and txt and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
                     local dist = math.floor((LocalPlayer.Character.HumanoidRootPart.Position - root.Position).Magnitude)
                     txt.Text = player.Name .. "\n[" .. tostring(dist) .. "m]"
                 end
             end)
         end
         
-        -- Chams (Duvar Arkası Görme)
         if chamsEnabled and not char:FindFirstChild("TR_Chams") then
             local highlight = Instance.new("Highlight")
             highlight.Name = "TR_Chams"
@@ -257,10 +260,4 @@ end)
 
 addTrack(espPage, "Duvar Arkası Renkli Görme (Chams): KAPALI", function(btn)
     chamsEnabled = not chamsEnabled
-    btn.Text = chamsEnabled and "Duvar Arkası Renkli Görme (Chams): AÇIK" or "Duvar Arkası Renkli Görme (Chams): KAPALI"
-    btn.BackgroundColor3 = chamsEnabled and Color3.fromRGB(0, 200, 100) or Color3.fromRGB(25, 25, 35)
-    for _, p in pairs(Players:GetPlayers()) do applyESP(p) end
-end)
-
--- =============================================================================
--- [3. SEKME] EN YAKIN OYUNCUYA TELEPORT & SÜRELİ AYAR
+        
