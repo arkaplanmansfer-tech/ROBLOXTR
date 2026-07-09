@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROBLOXTR PREMIUM PANEL (v3.1) - GERÇEK VE GELİŞMİŞ SÜRÜM (Mobil Uyumlu)
+-- ROBLOXTR PREMIUM PANEL (v3.0) - GERÇEK VE GELİŞMİŞ SÜRÜM (Mobil Uyumlu)
 -- =============================================================================
 local Players = game:GetService("Players")
 local CoreGui = game:GetService("CoreGui")
@@ -8,7 +8,7 @@ local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
 
--- [DÜZELTME 1] Eski Panelleri PlayerGui Üzerinden Temizleme Altyapısı
+-- Eski Panelleri PlayerGui Üzerinden Temizleme Altyapısı
 local PlayerGui = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
 if PlayerGui:FindFirstChild("RobloxTR_PremiumPanel") then
     PlayerGui:FindFirstChild("RobloxTR_PremiumPanel"):Destroy()
@@ -17,7 +17,6 @@ end
 -- ANA EKRAN (ScreenGui)
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "RobloxTR_PremiumPanel"
--- [DÜZELTME 2] Parent Artık CoreGui Değil, PlayerGui Oldu
 ScreenGui.Parent = PlayerGui
 ScreenGui.ResetOnSpawn = false
 
@@ -29,7 +28,6 @@ MainFrame.Size = UDim2.new(0, 480, 0, 360)
 MainFrame.Position = UDim2.new(0.5, -240, 0.5, -180)
 MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
 MainFrame.BorderSizePixel = 0
--- [DÜZELTME 3] Panel Başlangıçta Direkt Görünür Durumda Açılacak
 MainFrame.Visible = true
 
 local MainCorner = Instance.new("UICorner")
@@ -158,7 +156,7 @@ local function addTrack(parent, text, callback)
 end
 
 -- =============================================================================
--- [1. SEKME] OYUNCU ÖZELLİKLERİ (Hız, Zıplama, Noclip, Görünmezlik)
+-- [1. SEKME] OYUNCU ÖZELLİKLERİ
 -- =============================================================================
 addTrack(mainPage, "Süper Hız Aktif Et (WalkSpeed 75)", function()
     if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
@@ -200,7 +198,7 @@ addTrack(mainPage, "Görünmezlik & Aydınlatma Fullle", function()
 end)
 
 -- =============================================================================
--- [2. SEKME] GELİŞMİŞ ESP SİSTEMİ (Chams, Tracks, Mesafe)
+-- [2. SEKME] GELİŞMİŞ ESP SİSTEMİ
 -- =============================================================================
 local espEnabled = false
 local chamsEnabled = false
@@ -260,4 +258,5 @@ end)
 
 addTrack(espPage, "Duvar Arkası Renkli Görme (Chams): KAPALI", function(btn)
     chamsEnabled = not chamsEnabled
+    btn.Text = chamsEnabled and "Duvar Arkası Renkli Görme (Chams): AÇIK" or "Duvar Arkası Renkli Görme (Chams): KAPALI"
         
