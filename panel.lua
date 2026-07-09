@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROBLOXTR PREMIUM PANEL (v3.0) - GERÇEK VE GELİŞMİŞ SÜRÜM (Mobil Uyumlu)
+-- ROBLOXTR PREMIUM PANEL (v3.1) - GERÇEK VE GELİŞMİŞ SÜRÜM (Mobil Uyumlu)
 -- =============================================================================
 local Players = game:GetService("Players")
 local CoreGui = game:GetService("CoreGui")
