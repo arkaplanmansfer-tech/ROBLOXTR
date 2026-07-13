@@ -1,13 +1,12 @@
 -- =============================================================================
--- ROBLOXTR PREMIUM HUB (v3.0 FINAL EDITION)
--- Kurucu: Mansfer | Tasarım: v2.2 Pro | Gelişmiş Combat & Görsel Güncellemesi
+-- ROBLOXTR PREMIUM HUB (v3.1 - BUG FIX UPDATE)
+-- Kurucu: Mansfer | Sürüm: v3.1 | Fixes: PlatformStand Fly, Global Audio ID Fix
 -- =============================================================================
 
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 local Lighting = game:GetService("Lighting")
-local SoundService = game:GetService("SoundService")
 local LocalPlayer = Players.LocalPlayer
 local Camera = workspace.CurrentCamera
 
@@ -39,13 +38,13 @@ Instance.new("UICorner", avatar).CornerRadius = UDim.new(1, 0)
 
 local t = Instance.new("TextLabel")
 t.Parent = sidebar; t.BackgroundTransparency = 1; t.Position = UDim2.new(0, 0, 0, 70); t.Size = UDim2.new(1, 0, 0, 20)
-t.Font = Enum.Font.SourceSansBold; t.Text = "RobloxTR v3.0 Pro"; t.TextColor3 = Color3.fromRGB(255, 190, 0); t.TextSize = 16
+t.Font = Enum.Font.SourceSansBold; t.Text = "RobloxTR v3.1"; t.TextColor3 = Color3.fromRGB(255, 190, 0); t.TextSize = 16
 
 local cb = Instance.new("TextButton")
 cb.Parent = mf; cb.BackgroundTransparency = 1; cb.Position = UDim2.new(0, 450, 0, 8); cb.Size = UDim2.new(0, 25, 0, 25)
 cb.Font = Enum.Font.SourceSansBold; cb.Text = "X"; cb.TextColor3 = Color3.fromRGB(255, 70, 70); cb.TextSize = 18
 
--- SCROLLING CONTENT AREA (Otomatik Yükseklik Ayarlı)
+-- SCROLLING CONTENT AREA
 local function CreateScroll(name)
     local sf = Instance.new("ScrollingFrame")
     sf.Name = name; sf.Parent = mf; sf.BackgroundTransparency = 1; sf.Position = UDim2.new(0, 150, 0, 35); sf.Size = UDim2.new(0, 315, 0, 270)
@@ -62,7 +61,7 @@ local espC = CreateScroll("ESP")
 local musicC = CreateScroll("Music")
 local setC = CreateScroll("Settings")
 
--- [HOME] STATS PANELİ
+-- [HOME] STATS
 local function addStat(pnt, txt)
     local l = Instance.new("TextLabel"); l.Parent = pnt; l.Size = UDim2.new(1, -10, 0, 32); l.BackgroundColor3 = Color3.fromRGB(22, 22, 28)
     l.Font = Enum.Font.SourceSansBold; l.TextColor3 = Color3.fromRGB(220, 220, 220); l.TextSize = 13; Instance.new("UICorner", l).CornerRadius = UDim.new(0, 6)
@@ -109,7 +108,7 @@ end
 addTab("🏠 Home / Main", 100, homeC); addTab("⚡ Veledrom", 145, mainC); addTab("🎯 Combat & ESP", 190, espC); addTab("🎵 Music Hub", 235, musicC); addTab("⚙️ Ayarlar", 280, setC)
 if tabButtons[1] then tabButtons[1].BackgroundColor3 = Color3.fromRGB(255, 190, 0); tabButtons[1].TextColor3 = Color3.fromRGB(15, 15, 20) end
 
--- [V2.2 Gelişmiş Slider Modülü]
+-- [V2.2 SLIDER MODULE]
 local function CreateSlider(pnt, label, min, max, def, cb)
     local f = Instance.new("Frame"); f.Parent = pnt; f.Size = UDim2.new(1, -10, 0, 48); f.BackgroundColor3 = Color3.fromRGB(22, 22, 28)
     Instance.new("UICorner", f).CornerRadius = UDim.new(0, 6)
@@ -152,49 +151,83 @@ local function CreateBtn(pnt, txt, cb, color)
     b.MouseButton1Click:Connect(function() cb(b) end); return b
 end
 
--- GLOBAL DEĞİŞKENLER & DÖNGÜ YÖNETİCİLERİ
 local Config = { WalkSpeed = 16, JumpPower = 50, FlySpeed = 50, HitboxSize = 2 }
 local State = { Flying = false, InfJump = false, Hitbox = false, ESP = false, Chams = false }
 
--- [SLIDERS INTEGRATION]
+-- Sliders
 CreateSlider(mainC, "Yürüme Hızı (Speed)", 16, 300, 16, function(v) Config.WalkSpeed = v end)
 CreateSlider(mainC, "Zıplama Gücü (Jump)", 50, 300, 50, function(v) Config.JumpPower = v end)
-CreateSlider(mainC, "Uçma Hızı (Fly Speed)", 10, 200, 50, function(v) Config.FlySpeed = v end)
+CreateSlider(mainC, "Uçma Hızı (Fly Speed)", 10, 240, 50, function(v) Config.FlySpeed = v end)
 
 RunService.RenderStepped:Connect(function()
     local char = LocalPlayer.Character
-    if char and char:FindFirstChild("Humanoid") then
+    if char and char:FindFirstChild("Humanoid") and not State.Flying then
         char.Humanoid.WalkSpeed = Config.WalkSpeed
         if not char.Humanoid.UseJumpPower then char.Humanoid.UseJumpPower = true end
         char.Humanoid.JumpPower = Config.JumpPower
     end
 end)
 
--- [FLY SYSTEM V3]
+-- [PRO CAMERA-RELATIVE FLY SYSTEM]
 local flyV, flyG
-CreateBtn(mainC, "✈️ Fly (Uçma Sistemi)", function(b)
+CreateBtn(mainC, "✈️ Fly (Kameraya Göre Uçuş)", function(b)
     State.Flying = not State.Flying
     b.BackgroundColor3 = State.Flying and Color3.fromRGB(0, 160, 80) or Color3.fromRGB(30, 30, 38)
     local char = LocalPlayer.Character
-    if State.Flying and char and char:FindFirstChild("HumanoidRootPart") then
-        flyV = Instance.new("BodyVelocity"); flyV.MaxForce = Vector3.new(math.huge, math.huge, math.huge); flyV.Velocity = Vector3.new(0,0,0); flyV.Parent = char.HumanoidRootPart
-        flyG = Instance.new("BodyGyro"); flyG.MaxTorque = Vector3.new(math.huge, math.huge, math.huge); flyG.CFrame = char.HumanoidRootPart.CFrame; flyG.Parent = char.HumanoidRootPart
+    
+    if State.Flying and char and char:FindFirstChild("HumanoidRootPart") and char:FindFirstChild("Humanoid") then
+        char.Humanoid.PlatformStand = true -- Karakterin buga girip düşmesini engeller
+        
+        flyV = Instance.new("BodyVelocity")
+        flyV.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+        flyV.Velocity = Vector3.new(0,0,0)
+        flyV.Parent = char.HumanoidRootPart
+        
+        flyG = Instance.new("BodyGyro")
+        flyG.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
+        flyG.CFrame = char.HumanoidRootPart.CFrame
+        flyG.Parent = char.HumanoidRootPart
+        
         task.spawn(function()
             while State.Flying and char and char.Parent and flyV.Parent do
-                local dir = char.Humanoid.MoveDirection
                 local camCFrame = Camera.CFrame
-                local vel = Vector3.new(0,0,0)
-                if dir.Magnitude > 0 then vel = camCFrame:VectorToWorldSpace(Vector3.new(dir.X, 0, dir.Z == 0 and 0 or dir.Z)) * Config.FlySpeed end
-                if UserInputService:IsKeyDown(Enum.KeyCode.Space) then vel = vel + Vector3.new(0, Config.FlySpeed, 0) end
-                if UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) then vel = vel + Vector3.new(0, -Config.FlySpeed, 0) end
-                flyV.Velocity = vel
+                local moveVector = Vector3.new(0, 0, 0)
+                
+                -- Klavye Yön Kontrolleri (Baktığın yöne gitme algoritması)
+                if UserInputService:IsKeyDown(Enum.KeyCode.W) then moveVector = moveVector + camCFrame.LookVector end
+                if UserInputService:IsKeyDown(Enum.KeyCode.S) then moveVector = moveVector - camCFrame.LookVector end
+                if UserInputService:IsKeyDown(Enum.KeyCode.A) then moveVector = moveVector - camCFrame.RightVector end
+                if UserInputService:IsKeyDown(Enum.KeyCode.D) then moveVector = moveVector + camCFrame.RightVector end
+                
+                -- Mobil Joystick Desteği
+                if moveVector.Magnitude == 0 and char.Humanoid.MoveDirection.Magnitude > 0 then
+                    local joystickDir = char.Humanoid.MoveDirection
+                    moveVector = Vector3.new(joystickDir.X, camCFrame.LookVector.Y * 1.5, joystickDir.Z)
+                end
+                
+                -- Dikey Eksen Yükselme/Alçalma
+                if UserInputService:IsKeyDown(Enum.KeyCode.Space) then moveVector = moveVector + Vector3.new(0, 1, 0) end
+                if UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) then moveVector = moveVector - Vector3.new(0, 1, 0) end
+                
+                if moveVector.Magnitude > 0 then
+                    flyV.Velocity = moveVector.Unit * Config.FlySpeed
+                else
+                    flyV.Velocity = Vector3.new(0,0,0)
+                end
+                
                 flyG.CFrame = camCFrame
                 task.wait()
+            end
+            if char and char:FindFirstChild("Humanoid") then
+                char.Humanoid.PlatformStand = false
             end
         end)
     else
         if flyV then flyV:Destroy() end
         if flyG then flyG:Destroy() end
+        if char and char:FindFirstChild("Humanoid") then
+            char.Humanoid.PlatformStand = false
+        end
     end
 end)
 
@@ -237,22 +270,19 @@ task.spawn(function()
     end
 end)
 
--- [ESP & CHAMS MODULE V3]
+-- [ESP & CHAMS MODULE]
 local function updateESP(p)
     if p == LocalPlayer then return end
     local function setup(char)
         local head = char:WaitForChild("Head", 6)
         if not head then return end
         
-        -- Temizleme
         if head:FindFirstChild("TR_ESP") then head.TR_ESP:Destroy() end
         if char:FindFirstChild("TR_Chams") then char.TR_Chams:Destroy() end
         
-        -- Name ESP
         local bg = Instance.new("BillboardGui", head); bg.Name = "TR_ESP"; bg.AlwaysOnTop = true; bg.Size = UDim2.new(0, 120, 0, 24); bg.StudsOffset = Vector3.new(0, 2.5, 0); bg.Enabled = State.ESP
         local tl = Instance.new("TextLabel", bg); tl.BackgroundTransparency = 1; tl.Size = UDim2.new(1,0,1,0); tl.Font = Enum.Font.SourceSansBold; tl.TextColor3 = Color3.fromRGB(255, 255, 255); tl.TextSize = 11; tl.TextStrokeTransparency = 0.3
         
-        -- Chams
         local highlight = Instance.new("Highlight", char); highlight.Name = "TR_Chams"; highlight.FillColor = Color3.fromRGB(255, 60, 60); highlight.FillTransparency = 0.4; highlight.OutlineColor = Color3.fromRGB(255, 190, 0); highlight.OutlineTransparency = 0.1; highlight.Enabled = State.Chams
         
         local renderConn
@@ -278,25 +308,26 @@ CreateBtn(espC, "👁️ Mini Name ESP", function(b)
     b.BackgroundColor3 = State.ESP and Color3.fromRGB(0, 160, 80) or Color3.fromRGB(30, 30, 38)
 end)
 
-CreateBtn(espC, "🎨 Wall Chams (X-Ray Oyuncu)", function(b)
+CreateBtn(espC, "🎨 Wall Chams (X-Ray)", function(b)
     State.Chams = not State.Chams
     b.BackgroundColor3 = State.Chams and Color3.fromRGB(0, 160, 80) or Color3.fromRGB(30, 30, 38)
 end)
 
--- [GÜVENLİ MÜZİK ALTYAPISI]
-local srv = SoundService:FindFirstChild("HubMusicPlayer")
+-- [SES YALITIMLI MÜZİK SİSTEMİ]
+-- Seslerin her haritada kesin çalması için sadece global izinli resmi Roblox müzikleri kullanıldı.
+local srv = sg:FindFirstChild("HubMusic")
 if not srv then
-    srv = Instance.new("Sound", SoundService)
-    srv.Name = "HubMusicPlayer"
+    srv = Instance.new("Sound", sg) -- PlayerGui altında tamamen izole local oynatıcı
+    srv.Name = "HubMusic"
 end
-srv.Volume = 0.65; srv.Looped = true
+srv.Volume = 0.7; srv.Looped = true
 
-CreateBtn(musicC, "🔥 Play Gym Phonk", function() srv.SoundId = "rbxassetid://9043887091"; srv:Play() end)
-CreateBtn(musicC, "☕ Play Lofi Chill", function() srv.SoundId = "rbxassetid://9044431773"; srv:Play() end)
-CreateBtn(musicC, "🛸 Play Cyber Tension", function() srv.SoundId = "rbxassetid://9047104975"; srv:Play() end)
-CreateBtn(musicC, "🛑 Müziği Sustur", function() srv:Stop() end, Color3.fromRGB(150, 40, 40))
+CreateBtn(musicC, "🔥 Oynat: Action Synth (Phonk Alternatifi)", function() srv.SoundId = "rbxassetid://1837775911"; srv:Play() end)
+CreateBtn(musicC, "☕ Oynat: Lofi Chill Out", function() srv.SoundId = "rbxassetid://1839871761"; srv:Play() end)
+CreateBtn(musicC, "🛸 Oynat: Cyber Tension", function() srv.SoundId = "rbxassetid://1841490629"; srv:Play() end)
+CreateBtn(musicC, "🛑 Müziği Kapat", function() srv:Stop() end, Color3.fromRGB(150, 40, 40))
 
--- [SETTINGS / AJAN İŞLERİ]
+-- [SETTINGS]
 local fb = false
 CreateBtn(setC, "💡 FullBright (Geceyi Sil)", function(b)
     fb = not fb; Lighting.Ambient = fb and Color3.fromRGB(255,255,255) or Color3.fromRGB(127,127,127)
@@ -313,7 +344,7 @@ end)
 
 CreateBtn(setC, "🔗 WhatsApp Grubunu Al", function() if setclipboard then setclipboard("bit.ly/robloxturkiye") end end, Color3.fromRGB(255, 150, 0))
 
--- LOGO VE MENÜ AÇMA/KAPAMA SÜRÜKLEME ALTYAPISI
+-- TOGGLE BUTTON
 local tog = Instance.new("ImageButton", sg); tog.Size = UDim2.new(0, 52, 0, 52); tog.Position = UDim2.new(0.6, 0, 0.02, 0)
 tog.Image = "rbxassetid://10723345437"; tog.BackgroundColor3 = Color3.fromRGB(20,20,25)
 Instance.new("UICorner", tog).CornerRadius = UDim.new(0, 10)
@@ -332,4 +363,4 @@ local function Drag(f)
 end
 Drag(mf); Drag(tog)
 
-print("Premium Hub v3.0 Başarıyla Aktif Edildi!")
+print("RobloxTR v3.1 Premium Hub Sorunsuzca Yüklendi!")
