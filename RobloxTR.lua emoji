@@ -1,5 +1,5 @@
 -- ============================================
--- 📁 RobloxTR 1.8.2 - Hata Düzeltmesi
+-- 📁 RobloxTR 1.8.3 - Çalışan Versiyon
 -- 🚀 Kullanım: loadstring(game:HttpGet("URL"))()
 -- ============================================
 
@@ -18,8 +18,6 @@ loadstring([[
                 {name = "🙏 Dua", anim = "pray"},
                 {name = "👑 Selam", anim = "bow"},
                 {name = "🤔 Düşün", anim = "think"},
-                {name = "👀 Bakış", anim = "look"},
-                {name = "🤷 Omuz", anim = "shrug"},
             }
         },
         {
@@ -30,7 +28,6 @@ loadstring([[
                 {name = "🎸 Gitar", anim = "guitar"},
                 {name = "🤳 Selfie", anim = "selfie"},
                 {name = "🙌 Havaya", anim = "cheer"},
-                {name = "🎤 Mikrofon", anim = "mic"},
             }
         },
         {
@@ -41,7 +38,6 @@ loadstring([[
                 {name = "😴 Uyu", anim = "sleep"},
                 {name = "💪 Kas", anim = "muscle"},
                 {name = "🤸 Takla", anim = "flip"},
-                {name = "🧘‍♂️ Meditasyon", anim = "meditate"},
             }
         },
         {
@@ -51,8 +47,6 @@ loadstring([[
                 {name = "🦵 Tekme", anim = "kick"},
                 {name = "💢 Kızma", anim = "angry"},
                 {name = "😭 Ağla", anim = "cry"},
-                {name = "🛡️ Kalkan", anim = "shield"},
-                {name = "⚡ Güç", anim = "power"},
             }
         },
     }
@@ -64,22 +58,15 @@ loadstring([[
     local player = game.Players.LocalPlayer
     local UserInputService = game:GetService("UserInputService")
     
-    local activeTrack = nil
-    local activeAnim = nil
-    
     local function playEmote(emoteName)
         local character = player.Character
         if not character then return end
         local humanoid = character:FindFirstChild("Humanoid")
         if not humanoid then return end
         
-        if activeTrack then
-            activeTrack:Stop()
-            activeTrack = nil
-        end
-        if activeAnim then
-            activeAnim:Destroy()
-            activeAnim = nil
+        -- Önceki animasyonu durdur
+        for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
+            track:Stop()
         end
         
         local animMap = {
@@ -89,53 +76,38 @@ loadstring([[
             pray = "rbxassetid://507770234",
             bow = "rbxassetid://507771222",
             think = "rbxassetid://507770666",
-            look = "rbxassetid://507770888",
-            shrug = "rbxassetid://507770999",
             dance = "rbxassetid://507770456",
             dance2 = "rbxassetid://507770789",
             guitar = "rbxassetid://507770888",
             selfie = "rbxassetid://507771444",
             cheer = "rbxassetid://507770333",
-            mic = "rbxassetid://507770555",
             sit = "rbxassetid://507770000",
             lay = "rbxassetid://507770222",
             sleep = "rbxassetid://507770777",
             muscle = "rbxassetid://507770567",
             flip = "rbxassetid://507770890",
-            meditate = "rbxassetid://507770111",
             punch = "rbxassetid://507770999",
             kick = "rbxassetid://507771000",
             angry = "rbxassetid://507770444",
             cry = "rbxassetid://507770555",
-            shield = "rbxassetid://507770666",
-            power = "rbxassetid://507770777",
         }
         
         local animId = animMap[emoteName] or "rbxassetid://507770000"
         
         local anim = Instance.new("Animation")
         anim.AnimationId = animId
-        activeAnim = anim
-        
         local track = humanoid:LoadAnimation(anim)
-        activeTrack = track
         track:Play()
         
-        task.wait(5)
-        if track and track.IsPlaying then
-            track:Stop()
-            activeTrack = nil
-        end
-        if activeAnim then
-            activeAnim:Destroy()
-            activeAnim = nil
-        end
+        task.wait(4)
+        track:Stop()
     end
     
     -- ============================================
     -- 📱 PANEL ARAYÜZÜ
     -- ============================================
     
+    -- Eski GUI'yi sil
     local oldGui = player.PlayerGui:FindFirstChild("RobloxTR_Gui")
     if oldGui then oldGui:Destroy() end
     
@@ -144,7 +116,10 @@ loadstring([[
     sg.Parent = player.PlayerGui
     sg.ResetOnSpawn = false
     
-    -- Açma butonu
+    -- ============================================
+    -- 🔘 AÇMA BUTONU (Sağ Üst)
+    -- ============================================
+    
     local tog = Instance.new("TextButton")
     tog.Name = "ToggleButton"
     tog.Parent = sg
@@ -157,12 +132,16 @@ loadstring([[
     tog.TextColor3 = Color3.fromRGB(255, 255, 255)
     tog.TextSize = 20
     tog.ZIndex = 10
+    tog.AutoButtonColor = true
     
     local togCorner = Instance.new("UICorner")
     togCorner.CornerRadius = UDim.new(1, 0)
     togCorner.Parent = tog
     
-    -- Ana panel
+    -- ============================================
+    -- 📱 ANA PANEL
+    -- ============================================
+    
     local mf = Instance.new("Frame")
     mf.Name = "MainFrame"
     mf.Parent = sg
@@ -170,7 +149,7 @@ loadstring([[
     mf.BackgroundTransparency = 0.1
     mf.Position = UDim2.new(0.05, 0, 0.1, 0)
     mf.Size = UDim2.new(0, 370, 0, 420)
-    mf.Visible = false
+    mf.Visible = true  -- 🔥 BAŞLANGIÇTA AÇIK
     mf.ZIndex = 5
     
     local mc = Instance.new("UICorner")
@@ -189,12 +168,12 @@ loadstring([[
     title.Position = UDim2.new(0, 10, 0, 8)
     title.Size = UDim2.new(0, 250, 0, 30)
     title.Font = Enum.Font.SourceSansBold
-    title.Text = "⚡ RobloxTR 1.8.2"
+    title.Text = "⚡ RobloxTR 1.8.3"
     title.TextColor3 = Color3.fromRGB(255, 190, 0)
     title.TextSize = 16
     title.TextXAlignment = Enum.TextXAlignment.Left
     
-    -- Kapatma
+    -- Kapatma butonu (X)
     local closeBtn = Instance.new("TextButton")
     closeBtn.Parent = mf
     closeBtn.BackgroundTransparency = 1
@@ -206,6 +185,7 @@ loadstring([[
     closeBtn.TextSize = 16
     closeBtn.MouseButton1Click:Connect(function()
         mf.Visible = false
+        print("Panel kapatıldı")
     end)
     
     -- Scroll
@@ -223,7 +203,7 @@ loadstring([[
     layout.Padding = UDim.new(0, 6)
     
     -- ============================================
-    -- 📋 KATEGORİ OLUŞTURUCU (HATA DÜZELTİLDİ)
+    -- 📋 KATEGORİ OLUŞTUR
     -- ============================================
     
     local function CreateCategory(categoryData)
@@ -257,10 +237,9 @@ loadstring([[
         local grid = Instance.new("UIGridLayout")
         grid.Parent = btnFrame
         grid.CellSize = UDim2.new(0, 105, 0, 30)
-        grid.CellPadding = UDim2.new(0, 4, 0, 4)  -- ✅ DÜZELTİLDİ: UDim2
+        grid.CellPadding = UDim2.new(0, 4, 0, 4)
         grid.SortOrder = Enum.SortOrder.LayoutOrder
         
-        -- İfade butonları
         for _, emote in ipairs(categoryData.emotes) do
             local btn = Instance.new("TextButton")
             btn.Parent = btnFrame
@@ -284,83 +263,75 @@ loadstring([[
             end)
         end
         
-        -- Frame boyutunu güncelle
         task.wait(0.1)
         local contentSize = grid.AbsoluteContentSize
         btnFrame.Size = UDim2.new(0, 350, 0, contentSize.Y + 4)
-        
-        return catFrame, btnFrame
     end
     
-    -- Tüm kategoriler
+    -- Kategorileri ekle
     for _, cat in ipairs(CATEGORIES) do
         CreateCategory(cat)
     end
     
-    -- Canvas güncelle
+    -- Scroll boyutunu güncelle
     layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
         scroll.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y + 10)
     end)
     
     -- ============================================
-    -- 🖱️ SÜRÜKLEME (Düzeltildi)
-    -- ============================================
-    
-    local function MakeDraggable(f)
-        local dragging = false
-        local dragStart, startPos
-        
-        f.InputBegan:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-                dragging = true
-                dragStart = input.Position
-                startPos = f.Position
-            end
-        end)
-        
-        f.InputEnded:Connect(function()
-            dragging = false
-        end)
-        
-        f.InputChanged:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-                if dragging then
-                    local delta = input.Position - dragStart
-                    f.Position = UDim2.new(
-                        startPos.X.Scale,
-                        startPos.X.Offset + delta.X,
-                        startPos.Y.Scale,
-                        startPos.Y.Offset + delta.Y
-                    )
-                end
-            end
-        end)
-    end
-    
-    MakeDraggable(tog)
-    MakeDraggable(mf)
-    
-    -- ============================================
-    -- 🔘 PANEL AÇ/KAPA
+    -- 🔘 PANEL AÇ/KAPA (BASİT VE ÇALIŞIR)
     -- ============================================
     
     tog.MouseButton1Click:Connect(function()
         mf.Visible = not mf.Visible
+        print("Panel durumu: " .. tostring(mf.Visible))
     end)
     
     -- ============================================
-    -- ⌨️ Z TUŞU (PC)
+    -- 🖱️ SADECE BUTON SÜRÜKLEME (BASİT)
+    -- ============================================
+    
+    local dragging = false
+    local dragStart, startPos
+    
+    tog.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = true
+            dragStart = input.Position
+            startPos = tog.Position
+        end
+    end)
+    
+    tog.InputEnded:Connect(function()
+        dragging = false
+    end)
+    
+    tog.InputChanged:Connect(function(input)
+        if (input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseMovement) and dragging then
+            local delta = input.Position - dragStart
+            tog.Position = UDim2.new(
+                startPos.X.Scale,
+                startPos.X.Offset + delta.X,
+                startPos.Y.Scale,
+                startPos.Y.Offset + delta.Y
+            )
+        end
+    end)
+    
+    -- ============================================
+    -- ⌨️ Z TUŞU
     -- ============================================
     
     UserInputService.InputBegan:Connect(function(input)
         if input.KeyCode == Enum.KeyCode.Z then
             mf.Visible = not mf.Visible
+            print("Z tuşu ile panel: " .. tostring(mf.Visible))
         end
     end)
     
-    print("✅ RobloxTR 1.8.2 yüklendi! (" .. #CATEGORIES .. " kategori)")
+    print("✅ RobloxTR 1.8.3 yüklendi!")
     print("📱 Sağ üstteki ⚡ butonuna tıkla")
-    print("🔄 Panel başlangıçta KAPALI")
+    print("🔄 Panel BAŞLANGIÇTA AÇIK")
 ]])()
 
-print("🎮 RobloxTR 1.8.2 başlatıldı! (Hata düzeltildi)")
+print("🎮 RobloxTR 1.8.3 başlatıldı!")
