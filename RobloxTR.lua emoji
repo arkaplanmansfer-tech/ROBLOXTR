@@ -1,5 +1,5 @@
 -- ============================================
--- 📁 RobloxTR 1.8.1 - Kesintisiz Emote Paneli
+-- 📁 RobloxTR 1.8.2 - Hata Düzeltmesi
 -- 🚀 Kullanım: loadstring(game:HttpGet("URL"))()
 -- ============================================
 
@@ -58,14 +58,12 @@ loadstring([[
     }
     
     -- ============================================
-    -- 🎮 İFADE OYNATMA (KESİNTİSİZ)
+    -- 🎮 İFADE OYNATMA
     -- ============================================
     
     local player = game.Players.LocalPlayer
     local UserInputService = game:GetService("UserInputService")
-    local RunService = game:GetService("RunService")
     
-    -- Aktif animasyon takibi
     local activeTrack = nil
     local activeAnim = nil
     
@@ -75,7 +73,6 @@ loadstring([[
         local humanoid = character:FindFirstChild("Humanoid")
         if not humanoid then return end
         
-        -- Önceki animasyonu DÜZGÜN durdur
         if activeTrack then
             activeTrack:Stop()
             activeTrack = nil
@@ -85,7 +82,6 @@ loadstring([[
             activeAnim = nil
         end
         
-        -- Animasyon ID'leri (Roblox'un hazır animasyonları)
         local animMap = {
             wave = "rbxassetid://507770000",
             point = "rbxassetid://507771333",
@@ -117,7 +113,6 @@ loadstring([[
         
         local animId = animMap[emoteName] or "rbxassetid://507770000"
         
-        -- Animasyonu oluştur ve oynat
         local anim = Instance.new("Animation")
         anim.AnimationId = animId
         activeAnim = anim
@@ -126,7 +121,6 @@ loadstring([[
         activeTrack = track
         track:Play()
         
-        -- 5 saniye sonra otomatik durdur (isteğe bağlı)
         task.wait(5)
         if track and track.IsPlaying then
             track:Stop()
@@ -139,10 +133,9 @@ loadstring([[
     end
     
     -- ============================================
-    -- 📱 PANEL ARAYÜZÜ (Mobil Optimize)
+    -- 📱 PANEL ARAYÜZÜ
     -- ============================================
     
-    -- Eski GUI varsa sil
     local oldGui = player.PlayerGui:FindFirstChild("RobloxTR_Gui")
     if oldGui then oldGui:Destroy() end
     
@@ -151,10 +144,7 @@ loadstring([[
     sg.Parent = player.PlayerGui
     sg.ResetOnSpawn = false
     
-    -- ============================================
-    -- 🔘 AÇMA BUTONU
-    -- ============================================
-    
+    -- Açma butonu
     local tog = Instance.new("TextButton")
     tog.Name = "ToggleButton"
     tog.Parent = sg
@@ -172,17 +162,14 @@ loadstring([[
     togCorner.CornerRadius = UDim.new(1, 0)
     togCorner.Parent = tog
     
-    -- ============================================
-    -- 📱 ANA PANEL (Küçük - Mobil Uyumlu)
-    -- ============================================
-    
+    -- Ana panel
     local mf = Instance.new("Frame")
     mf.Name = "MainFrame"
     mf.Parent = sg
     mf.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
     mf.BackgroundTransparency = 0.1
     mf.Position = UDim2.new(0.05, 0, 0.1, 0)
-    mf.Size = UDim2.new(0, 370, 0, 420)  -- Biraz büyüdü
+    mf.Size = UDim2.new(0, 370, 0, 420)
     mf.Visible = false
     mf.ZIndex = 5
     
@@ -202,7 +189,7 @@ loadstring([[
     title.Position = UDim2.new(0, 10, 0, 8)
     title.Size = UDim2.new(0, 250, 0, 30)
     title.Font = Enum.Font.SourceSansBold
-    title.Text = "⚡ RobloxTR 1.8.1"
+    title.Text = "⚡ RobloxTR 1.8.2"
     title.TextColor3 = Color3.fromRGB(255, 190, 0)
     title.TextSize = 16
     title.TextXAlignment = Enum.TextXAlignment.Left
@@ -236,7 +223,7 @@ loadstring([[
     layout.Padding = UDim.new(0, 6)
     
     -- ============================================
-    -- 📋 KATEGORİ OLUŞTURUCU
+    -- 📋 KATEGORİ OLUŞTURUCU (HATA DÜZELTİLDİ)
     -- ============================================
     
     local function CreateCategory(categoryData)
@@ -270,7 +257,7 @@ loadstring([[
         local grid = Instance.new("UIGridLayout")
         grid.Parent = btnFrame
         grid.CellSize = UDim2.new(0, 105, 0, 30)
-        grid.CellPadding = UDim.new(0, 4)
+        grid.CellPadding = UDim2.new(0, 4, 0, 4)  -- ✅ DÜZELTİLDİ: UDim2
         grid.SortOrder = Enum.SortOrder.LayoutOrder
         
         -- İfade butonları
@@ -291,7 +278,6 @@ loadstring([[
             
             btn.MouseButton1Click:Connect(function()
                 playEmote(emote.anim)
-                -- Geri bildirim
                 btn.BackgroundColor3 = Color3.fromRGB(0, 180, 60)
                 task.wait(0.12)
                 btn.BackgroundColor3 = Color3.fromRGB(45, 45, 55)
@@ -317,24 +303,23 @@ loadstring([[
     end)
     
     -- ============================================
-    -- 🖱️ SÜRÜKLEME
+    -- 🖱️ SÜRÜKLEME (Düzeltildi)
     -- ============================================
     
     local function MakeDraggable(f)
-        local dragging, dragInput, dragStart, startPos
+        local dragging = false
+        local dragStart, startPos
         
         f.InputBegan:Connect(function(input)
             if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
                 dragging = true
                 dragStart = input.Position
                 startPos = f.Position
-                
-                input.Changed:Connect(function()
-                    if input.UserInputState == Enum.UserInputState.End then
-                        dragging = false
-                    end
-                end)
             end
+        end)
+        
+        f.InputEnded:Connect(function()
+            dragging = false
         end)
         
         f.InputChanged:Connect(function(input)
@@ -373,10 +358,9 @@ loadstring([[
         end
     end)
     
-    print("✅ RobloxTR 1.8.1 yüklendi! (" .. #CATEGORIES .. " kategori)")
+    print("✅ RobloxTR 1.8.2 yüklendi! (" .. #CATEGORIES .. " kategori)")
     print("📱 Sağ üstteki ⚡ butonuna tıkla")
     print("🔄 Panel başlangıçta KAPALI")
-    print("🎭 Tüm ifadeler kesintisiz çalışıyor!")
 ]])()
 
-print("🎮 RobloxTR 1.8.1 başlatıldı! (Kesintisiz emote panel)")
+print("🎮 RobloxTR 1.8.2 başlatıldı! (Hata düzeltildi)")
