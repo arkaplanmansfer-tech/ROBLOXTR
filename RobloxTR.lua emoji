@@ -1,11 +1,12 @@
 -- ============================================
--- 📁 RobloxTR 1.1.2 - Hata Düzeltmesi
+-- 📁 RobloxTR 1.5 - Tam Sürüm
 -- 🚀 Kullanım: loadstring(game:HttpGet("URL"))()
 -- ============================================
 
 loadstring([[
     -- 🔧 AYARLAR
-    local PANEL_BASLIK = "⚡ RobloxTR 1.1 ⚡"
+    local VERSION = "1.5"
+    local PANEL_BASLIK = "⚡ RobloxTR " .. VERSION .. " ⚡"
     local PANEL_RENK = Color3.fromRGB(15, 15, 30)
     local BUTON_RENK = Color3.fromRGB(255, 215, 0)
     
@@ -237,27 +238,27 @@ loadstring([[
     end
     
     -- ============================================
-    -- 📱 GUI (Delta Tarzı - Hata Düzeltmeli)
+    -- 📱 GUI (1.5 - Ekran Ortası Buton)
     -- ============================================
     
-    -- Eski GUI varsa sil (çakışmayı önle)
+    -- Eski GUI varsa sil
     local oldGui = player.PlayerGui:FindFirstChild("RobloxTR_Gui")
     if oldGui then oldGui:Destroy() end
     
-    -- Ana GUI (ölünce kaybolmaz)
+    -- Ana GUI
     local gui = Instance.new("ScreenGui")
     gui.Name = "RobloxTR_Gui"
     gui.Parent = player.PlayerGui
     gui.ResetOnSpawn = false
-    gui.Enabled = true  -- 🔥 BAŞLANGIÇTA AÇIK!
+    gui.Enabled = true
     
     -- ============================================
-    -- 🔘 AÇMA BUTONU (TextButton - Daha Güvenilir)
+    -- 🔘 AÇMA BUTONU (EKRAN ORTASI)
     -- ============================================
     
     local toggleBtn = Instance.new("TextButton")
-    toggleBtn.Size = UDim2.new(0, 55, 0, 55)
-    toggleBtn.Position = UDim2.new(1, -70, 1, -75)
+    toggleBtn.Size = UDim2.new(0, 60, 0, 60)
+    toggleBtn.Position = UDim2.new(0.5, -30, 0.5, -30)  -- Tam orta
     toggleBtn.Text = "⚡"
     toggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
     toggleBtn.TextScaled = true
@@ -265,14 +266,17 @@ loadstring([[
     toggleBtn.BackgroundTransparency = 0.15
     toggleBtn.BorderSizePixel = 0
     toggleBtn.Parent = gui
-    toggleBtn.Visible = true
     toggleBtn.ZIndex = 10
     
     local btnCorner = Instance.new("UICorner")
     btnCorner.CornerRadius = UDim.new(1, 0)
     btnCorner.Parent = toggleBtn
     
-    -- Buton sürükleme
+    -- Buton gölge
+    local shadow = Instance.new("UIShadow")
+    shadow.Parent = toggleBtn
+    
+    -- Sürükleme
     local btnDragging = false
     local btnDragStart, btnStartPos
     
@@ -302,9 +306,12 @@ loadstring([[
         end
     end)
     
-    -- Butona tıkla (panel gizle/göster)
+    -- Butona tıkla (paneli kapat/aç)
+    local panelVisible = true
     toggleBtn.MouseButton1Click:Connect(function()
-        mainFrame.Visible = not mainFrame.Visible
+        panelVisible = not panelVisible
+        mainFrame.Visible = panelVisible
+        toggleBtn.Text = panelVisible and "⚡" or "⚡"
     end)
     
     -- ============================================
@@ -312,13 +319,13 @@ loadstring([[
     -- ============================================
     
     local mainFrame = Instance.new("Frame")
-    mainFrame.Size = UDim2.new(0, 380, 0, 480)
-    mainFrame.Position = UDim2.new(0.5, -190, 0.5, -240)
+    mainFrame.Size = UDim2.new(0, 400, 0, 500)
+    mainFrame.Position = UDim2.new(0.5, -200, 0.5, -250)
     mainFrame.BackgroundColor3 = PANEL_RENK
     mainFrame.BackgroundTransparency = 0.15
     mainFrame.BorderSizePixel = 0
     mainFrame.Parent = gui
-    mainFrame.Visible = true  -- 🔥 BAŞLANGIÇTA GÖRÜNÜR!
+    mainFrame.Visible = true
     mainFrame.ZIndex = 5
     
     local corner = Instance.new("UICorner")
@@ -360,7 +367,7 @@ loadstring([[
         end
     end)
     
-    -- Başlık çubuğu
+    -- Başlık
     local titleBar = Instance.new("Frame")
     titleBar.Size = UDim2.new(1, 0, 0, 40)
     titleBar.BackgroundColor3 = BUTON_RENK
@@ -383,7 +390,7 @@ loadstring([[
     title.TextXAlignment = Enum.TextXAlignment.Left
     title.Parent = titleBar
     
-    -- Kapatma butonu
+    -- Kapatma (sadece paneli gizler)
     local closeBtn = Instance.new("TextButton")
     closeBtn.Size = UDim2.new(0, 30, 0, 30)
     closeBtn.Position = UDim2.new(1, -35, 0, 5)
@@ -393,10 +400,11 @@ loadstring([[
     closeBtn.BackgroundTransparency = 1
     closeBtn.Parent = titleBar
     closeBtn.MouseButton1Click:Connect(function()
+        panelVisible = false
         mainFrame.Visible = false
     end)
     
-    -- Scroll alanı
+    -- Scroll
     local scroll = Instance.new("ScrollingFrame")
     scroll.Size = UDim2.new(1, -10, 1, -50)
     scroll.Position = UDim2.new(0, 5, 0, 45)
@@ -405,7 +413,7 @@ loadstring([[
     scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
     scroll.Parent = mainFrame
     
-    -- Butonlar
+    -- Butonlar (2 sütun)
     local columns = 2
     local btnWidth = 0.43
     local btnHeight = 0.12
@@ -458,15 +466,15 @@ loadstring([[
     
     UserInputService.InputBegan:Connect(function(input)
         if input.KeyCode == Enum.KeyCode.Z then
-            mainFrame.Visible = not mainFrame.Visible
+            panelVisible = not panelVisible
+            mainFrame.Visible = panelVisible
         end
     end)
     
-    print("✅ RobloxTR 1.1.2 yüklendi! (" .. #COMMANDS .. " komut)")
-    print("📱 Delta Tarzı: Sağ alttaki ⚡ butonuna tıkla")
+    print("✅ RobloxTR " .. VERSION .. " yüklendi! (" .. #COMMANDS .. " komut)")
+    print("📱 Ekran ortasındaki ⚡ butonuna tıkla (sürüklenebilir)")
     print("⌨️ PC: Z tuşuna bas")
-    print("🔄 Sürüklemek için tıkla ve sürükle")
-    print("🎮 Panel başlangıçta AÇIK!")
+    print("🔄 Panel başlangıçta AÇIK")
 ]])()
 
-print("🎮 RobloxTR 1.1.2 başlatıldı! (Hata düzeltildi)")
+print("🎮 RobloxTR 1.5 başlatıldı! (Ekran ortası buton)")
