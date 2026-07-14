@@ -1,5 +1,5 @@
 -- ============================================
--- 📁 RobloxTR 1.1.1 - Delta Pozisyon Düzeltmesi
+-- 📁 RobloxTR 1.1.2 - Hata Düzeltmesi
 -- 🚀 Kullanım: loadstring(game:HttpGet("URL"))()
 -- ============================================
 
@@ -237,61 +237,55 @@ loadstring([[
     end
     
     -- ============================================
-    -- 📱 GUI (Delta Tarzı - Mobil Optimize)
+    -- 📱 GUI (Delta Tarzı - Hata Düzeltmeli)
     -- ============================================
+    
+    -- Eski GUI varsa sil (çakışmayı önle)
+    local oldGui = player.PlayerGui:FindFirstChild("RobloxTR_Gui")
+    if oldGui then oldGui:Destroy() end
     
     -- Ana GUI (ölünce kaybolmaz)
     local gui = Instance.new("ScreenGui")
     gui.Name = "RobloxTR_Gui"
     gui.Parent = player.PlayerGui
     gui.ResetOnSpawn = false
-    gui.Enabled = false  -- Başlangıçta kapalı
+    gui.Enabled = true  -- 🔥 BAŞLANGIÇTA AÇIK!
     
-    -- 🔘 AÇMA BUTONU (Delta'nın tam yerinde - Sağ Alt)
-    local toggleBtn = Instance.new("ImageButton")
+    -- ============================================
+    -- 🔘 AÇMA BUTONU (TextButton - Daha Güvenilir)
+    -- ============================================
+    
+    local toggleBtn = Instance.new("TextButton")
     toggleBtn.Size = UDim2.new(0, 55, 0, 55)
-    toggleBtn.Position = UDim2.new(1, -70, 1, -75)  -- Sağ alt köşe
+    toggleBtn.Position = UDim2.new(1, -70, 1, -75)
+    toggleBtn.Text = "⚡"
+    toggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    toggleBtn.TextScaled = true
     toggleBtn.BackgroundColor3 = BUTON_RENK
     toggleBtn.BackgroundTransparency = 0.15
     toggleBtn.BorderSizePixel = 0
     toggleBtn.Parent = gui
-    toggleBtn.Visible = true  -- Başlangıçta görünür
+    toggleBtn.Visible = true
     toggleBtn.ZIndex = 10
     
     local btnCorner = Instance.new("UICorner")
     btnCorner.CornerRadius = UDim.new(1, 0)
     btnCorner.Parent = toggleBtn
     
-    -- Buton gölge
-    local shadow = Instance.new("UIShadow")
-    shadow.Parent = toggleBtn
-    
-    -- Buton içindeki yazı
-    local btnText = Instance.new("TextLabel")
-    btnText.Size = UDim2.new(1, 0, 1, 0)
-    btnText.Text = "⚡"
-    btnText.TextColor3 = Color3.fromRGB(255, 255, 255)
-    btnText.TextScaled = true
-    btnText.BackgroundTransparency = 1
-    btnText.Font = Enum.Font.GothamBold
-    btnText.Parent = toggleBtn
-    
     -- Buton sürükleme
     local btnDragging = false
-    local btnDragInput, btnDragStart, btnStartPos
+    local btnDragStart, btnStartPos
     
     toggleBtn.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             btnDragging = true
             btnDragStart = input.Position
             btnStartPos = toggleBtn.Position
-            
-            input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then
-                    btnDragging = false
-                end
-            end)
         end
+    end)
+    
+    toggleBtn.InputEnded:Connect(function()
+        btnDragging = false
     end)
     
     toggleBtn.InputChanged:Connect(function(input)
@@ -308,23 +302,23 @@ loadstring([[
         end
     end)
     
-    -- Butona tıkla (panel aç/kapa)
+    -- Butona tıkla (panel gizle/göster)
     toggleBtn.MouseButton1Click:Connect(function()
-        gui.Enabled = not gui.Enabled
-        toggleBtn.Visible = not gui.Enabled
+        mainFrame.Visible = not mainFrame.Visible
     end)
     
     -- ============================================
-    -- 📱 ANA PANEL (Sürüklenebilir)
+    -- 📱 ANA PANEL
     -- ============================================
     
     local mainFrame = Instance.new("Frame")
-    mainFrame.Size = UDim2.new(0, 380, 0, 480)  -- Delta boyutu
+    mainFrame.Size = UDim2.new(0, 380, 0, 480)
     mainFrame.Position = UDim2.new(0.5, -190, 0.5, -240)
     mainFrame.BackgroundColor3 = PANEL_RENK
     mainFrame.BackgroundTransparency = 0.15
     mainFrame.BorderSizePixel = 0
     mainFrame.Parent = gui
+    mainFrame.Visible = true  -- 🔥 BAŞLANGIÇTA GÖRÜNÜR!
     mainFrame.ZIndex = 5
     
     local corner = Instance.new("UICorner")
@@ -336,22 +330,20 @@ loadstring([[
     stroke.Color = Color3.fromRGB(255, 215, 0)
     stroke.Parent = mainFrame
     
-    -- Sürükleme Sistemi
+    -- Panel sürükleme
     local dragging = false
-    local dragInput, dragStart, startPos
+    local dragStart, startPos
     
     mainFrame.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             dragging = true
             dragStart = input.Position
             startPos = mainFrame.Position
-            
-            input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then
-                    dragging = false
-                end
-            end)
         end
+    end)
+    
+    mainFrame.InputEnded:Connect(function()
+        dragging = false
     end)
     
     mainFrame.InputChanged:Connect(function(input)
@@ -368,7 +360,7 @@ loadstring([[
         end
     end)
     
-    -- Başlık çubuğu (sürükleme alanı)
+    -- Başlık çubuğu
     local titleBar = Instance.new("Frame")
     titleBar.Size = UDim2.new(1, 0, 0, 40)
     titleBar.BackgroundColor3 = BUTON_RENK
@@ -401,8 +393,7 @@ loadstring([[
     closeBtn.BackgroundTransparency = 1
     closeBtn.Parent = titleBar
     closeBtn.MouseButton1Click:Connect(function()
-        gui.Enabled = false
-        toggleBtn.Visible = true
+        mainFrame.Visible = false
     end)
     
     -- Scroll alanı
@@ -414,7 +405,7 @@ loadstring([[
     scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
     scroll.Parent = mainFrame
     
-    -- Butonlar (2 sütun - Delta)
+    -- Butonlar
     local columns = 2
     local btnWidth = 0.43
     local btnHeight = 0.12
@@ -462,20 +453,20 @@ loadstring([[
     scroll.CanvasSize = UDim2.new(0, 0, 0, (maxRows + 1) * 70 + 20)
     
     -- ============================================
-    -- ⌨️ PC için Z tuşu desteği
+    -- ⌨️ PC için Z tuşu
     -- ============================================
     
     UserInputService.InputBegan:Connect(function(input)
         if input.KeyCode == Enum.KeyCode.Z then
-            gui.Enabled = not gui.Enabled
-            toggleBtn.Visible = not gui.Enabled
+            mainFrame.Visible = not mainFrame.Visible
         end
     end)
     
-    print("✅ RobloxTR 1.1.1 yüklendi! (" .. #COMMANDS .. " komut)")
+    print("✅ RobloxTR 1.1.2 yüklendi! (" .. #COMMANDS .. " komut)")
     print("📱 Delta Tarzı: Sağ alttaki ⚡ butonuna tıkla")
     print("⌨️ PC: Z tuşuna bas")
     print("🔄 Sürüklemek için tıkla ve sürükle")
+    print("🎮 Panel başlangıçta AÇIK!")
 ]])()
 
-print("🎮 RobloxTR 1.1.1 başlatıldı! (Delta pozisyonu düzeltildi)")
+print("🎮 RobloxTR 1.1.2 başlatıldı! (Hata düzeltildi)")
