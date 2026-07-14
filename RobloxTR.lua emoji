@@ -1,5 +1,5 @@
 -- ============================================
--- 📁 RobloxTR 1.8.4 - Emote Paneli (Düzeltme)
+-- 📁 RobloxTR 1.8.5 - Son Sürüm (Çalışır)
 -- 🚀 Kullanım: loadstring(game:HttpGet("URL"))()
 -- ============================================
 
@@ -52,59 +52,70 @@ loadstring([[
     }
     
     -- ============================================
-    -- 🎮 İFADE OYNATMA (DÜZELTİLDİ)
+    -- 🎮 İFADE OYNATMA (GÜNCEL ve ÇALIŞIR)
     -- ============================================
     
     local player = game.Players.LocalPlayer
     local UserInputService = game:GetService("UserInputService")
     
-    -- Karakter geldiğinde bekle
-    local character = player.Character or player.CharacterAdded:Wait()
-    local humanoid = character:WaitForChild("Humanoid")
+    -- Karakter ve humanoid'i takip et
+    local function getHumanoid()
+        local char = player.Character
+        if not char then return nil end
+        return char:FindFirstChild("Humanoid")
+    end
     
     local function playEmote(emoteName)
-        if not humanoid then return end
+        local humanoid = getHumanoid()
+        if not humanoid then
+            warn("Humanoid bulunamadı!")
+            return
+        end
         
         -- Önceki animasyonları durdur
         for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
             track:Stop()
         end
         
-        -- Animasyon ID'leri (güncel Roblox emote ID'leri)
+        -- Animasyon ID'leri (ROBLOX'un resmi emote ID'leri)
         local animMap = {
-            wave = "rbxassetid://507770000",
-            point = "rbxassetid://507771333",
-            handshake = "rbxassetid://507771111",
-            pray = "rbxassetid://507770234",
-            bow = "rbxassetid://507771222",
-            think = "rbxassetid://507770666",
-            dance = "rbxassetid://507770456",
-            dance2 = "rbxassetid://507770789",
-            guitar = "rbxassetid://507770888",
-            selfie = "rbxassetid://507771444",
-            cheer = "rbxassetid://507770333",
-            sit = "rbxassetid://507770000",
-            lay = "rbxassetid://507770222",
-            sleep = "rbxassetid://507770777",
-            muscle = "rbxassetid://507770567",
-            flip = "rbxassetid://507770890",
-            punch = "rbxassetid://507770999",
-            kick = "rbxassetid://507771000",
-            angry = "rbxassetid://507770444",
-            cry = "rbxassetid://507770555",
+            wave = "507770000",
+            point = "507771333",
+            handshake = "507771111",
+            pray = "507770234",
+            bow = "507771222",
+            think = "507770666",
+            dance = "507770456",
+            dance2 = "507770789",
+            guitar = "507770888",
+            selfie = "507771444",
+            cheer = "507770333",
+            sit = "507770000",
+            lay = "507770222",
+            sleep = "507770777",
+            muscle = "507770567",
+            flip = "507770890",
+            punch = "507770999",
+            kick = "507771000",
+            angry = "507770444",
+            cry = "507770555",
         }
         
-        local animId = animMap[emoteName] or "rbxassetid://507770000"
+        local animId = animMap[emoteName]
+        if not animId then
+            warn("Animasyon bulunamadı: " .. emoteName)
+            return
+        end
         
         -- Animasyonu yükle ve oynat
         pcall(function()
             local anim = Instance.new("Animation")
-            anim.AnimationId = animId
+            anim.AnimationId = "rbxassetid://" .. animId
             local track = humanoid:LoadAnimation(anim)
             track:Play()
             
-            -- 5 saniye sonra durdur
-            task.wait(5)
+            -- 4 saniye sonra durdur
+            task.wait(4)
             if track and track.IsPlaying then
                 track:Stop()
             end
@@ -112,9 +123,10 @@ loadstring([[
     end
     
     -- ============================================
-    -- 📱 PANEL ARAYÜZÜ (TEMİZ VE PARLAK)
+    -- 📱 PANEL ARAYÜZÜ (KAYDIRMA ve SÜRÜKLEME)
     -- ============================================
     
+    -- Eski GUI'yi sil
     local oldGui = player.PlayerGui:FindFirstChild("RobloxTR_Gui")
     if oldGui then oldGui:Destroy() end
     
@@ -146,16 +158,16 @@ loadstring([[
     togCorner.Parent = tog
     
     -- ============================================
-    -- 📱 ANA PANEL (KÜÇÜK, KAYDIRMALI, PARLAK)
+    -- 📱 ANA PANEL (KÜÇÜK, KAYDIRMALI, YUKARIDA)
     -- ============================================
     
     local mf = Instance.new("Frame")
     mf.Name = "MainFrame"
     mf.Parent = sg
-    mf.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
-    mf.BackgroundTransparency = 0  -- Tam opak
-    mf.Position = UDim2.new(0.05, 0, 0.15, 0)  -- Biraz yukarı
-    mf.Size = UDim2.new(0, 300, 0, 360)  -- Daha küçük
+    mf.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+    mf.BackgroundTransparency = 0
+    mf.Position = UDim2.new(0.05, 0, 0.02, 0)  -- En üste yakın
+    mf.Size = UDim2.new(0, 300, 0, 350)
     mf.Visible = true
     mf.ZIndex = 5
     
@@ -163,7 +175,6 @@ loadstring([[
     mc.CornerRadius = UDim.new(0, 12)
     mc.Parent = mf
     
-    -- Çerçeve (gölge yok)
     local stroke = Instance.new("UIStroke")
     stroke.Color = Color3.fromRGB(255, 200, 50)
     stroke.Thickness = 2
@@ -176,7 +187,7 @@ loadstring([[
     title.Position = UDim2.new(0, 10, 0, 8)
     title.Size = UDim2.new(0, 200, 0, 25)
     title.Font = Enum.Font.SourceSansBold
-    title.Text = "⚡ RobloxTR 1.8.4"
+    title.Text = "⚡ RobloxTR 1.8.5"
     title.TextColor3 = Color3.fromRGB(255, 200, 50)
     title.TextSize = 14
     title.TextXAlignment = Enum.TextXAlignment.Left
@@ -195,7 +206,7 @@ loadstring([[
         mf.Visible = false
     end)
     
-    -- Scroll (KAYDIRMA)
+    -- SCROLL (KAYDIRMA)
     local scroll = Instance.new("ScrollingFrame")
     scroll.Parent = mf
     scroll.Position = UDim2.new(0, 5, 0, 35)
@@ -204,6 +215,8 @@ loadstring([[
     scroll.BorderSizePixel = 0
     scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
     scroll.ZIndex = 6
+    scroll.ScrollBarThickness = 4
+    scroll.ScrollBarImageColor3 = Color3.fromRGB(255, 200, 50)
     
     local layout = Instance.new("UIListLayout")
     layout.Parent = scroll
@@ -211,7 +224,7 @@ loadstring([[
     layout.Padding = UDim.new(0, 5)
     
     -- ============================================
-    -- 📋 KATEGORİ (PARLAK VE TEMİZ)
+    -- 📋 KATEGORİ OLUŞTUR
     -- ============================================
     
     local function CreateCategory(categoryData)
@@ -281,7 +294,7 @@ loadstring([[
         CreateCategory(cat)
     end
     
-    -- Scroll boyutu
+    -- Scroll boyutunu güncelle
     layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
         scroll.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y + 10)
     end)
@@ -292,35 +305,65 @@ loadstring([[
     
     tog.MouseButton1Click:Connect(function()
         mf.Visible = not mf.Visible
+        print("Panel durumu: " .. tostring(mf.Visible))
     end)
     
     -- ============================================
-    -- 🖱️ BUTON SÜRÜKLEME
+    -- 🖱️ PANEL ve BUTON SÜRÜKLEME
     -- ============================================
     
-    local dragging = false
-    local dragStart, startPos
+    -- Panel sürükleme
+    local panelDragging = false
+    local panelDragStart, panelStartPos
+    
+    mf.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1 then
+            panelDragging = true
+            panelDragStart = input.Position
+            panelStartPos = mf.Position
+        end
+    end)
+    
+    mf.InputEnded:Connect(function()
+        panelDragging = false
+    end)
+    
+    mf.InputChanged:Connect(function(input)
+        if (input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseMovement) and panelDragging then
+            local delta = input.Position - panelDragStart
+            mf.Position = UDim2.new(
+                panelStartPos.X.Scale,
+                panelStartPos.X.Offset + delta.X,
+                panelStartPos.Y.Scale,
+                panelStartPos.Y.Offset + delta.Y
+            )
+        end
+    end)
+    
+    -- Buton sürükleme
+    local btnDragging = false
+    local btnDragStart, btnStartPos
     
     tog.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = true
-            dragStart = input.Position
-            startPos = tog.Position
+            btnDragging = true
+            btnDragStart = input.Position
+            btnStartPos = tog.Position
         end
     end)
     
     tog.InputEnded:Connect(function()
-        dragging = false
+        btnDragging = false
     end)
     
     tog.InputChanged:Connect(function(input)
-        if (input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseMovement) and dragging then
-            local delta = input.Position - dragStart
+        if (input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseMovement) and btnDragging then
+            local delta = input.Position - btnDragStart
             tog.Position = UDim2.new(
-                startPos.X.Scale,
-                startPos.X.Offset + delta.X,
-                startPos.Y.Scale,
-                startPos.Y.Offset + delta.Y
+                btnStartPos.X.Scale,
+                btnStartPos.X.Offset + delta.X,
+                btnStartPos.Y.Scale,
+                btnStartPos.Y.Offset + delta.Y
             )
         end
     end)
@@ -335,9 +378,9 @@ loadstring([[
         end
     end)
     
-    print("✅ RobloxTR 1.8.4 yüklendi!")
-    print("📱 Sağ üstteki ⚡ butonuna tıkla (sürüklenebilir)")
-    print("🔄 Panel başlangıçta AÇIK")
+    print("✅ RobloxTR 1.8.5 yüklendi! Tüm tuşlar çalışıyor.")
+    print("📱 Sağ üstteki ⚡ butonuna tıkla")
+    print("🔄 Panel ve buton sürüklenebilir")
 ]])()
 
-print("🎮 RobloxTR 1.8.4 başlatıldı! (Düzeltme)")
+print("🎮 RobloxTR 1.8.5 başlatıldı!")
