@@ -1,22 +1,20 @@
 -- ============================================
--- 📁 RobloxTR 1.5 - Tam Sürüm
+-- 📁 RobloxTR 2.2 - Emoji Panel (Mobil Uyumlu)
 -- 🚀 Kullanım: loadstring(game:HttpGet("URL"))()
 -- ============================================
 
 loadstring([[
     -- 🔧 AYARLAR
-    local VERSION = "1.5"
+    local VERSION = "2.2"
     local PANEL_BASLIK = "⚡ RobloxTR " .. VERSION .. " ⚡"
-    local PANEL_RENK = Color3.fromRGB(15, 15, 30)
+    local PANEL_RENK = Color3.fromRGB(20, 20, 35)
     local BUTON_RENK = Color3.fromRGB(255, 215, 0)
     
-    -- 📋 KOMUTLAR (26 adet)
+    -- 📋 EMOJI KOMUTLAR (Resimdeki gibi düzenlendi)
     local COMMANDS = {
         {emoji = "❤️", name = "Heal", color = {0, 255, 100}},
         {emoji = "💀", name = "Kill", color = {255, 0, 0}},
         {emoji = "🚀", name = "Fly", color = {0, 150, 255}},
-        {emoji = "🔇", name = "Mute", color = {255, 165, 0}},
-        {emoji = "📌", name = "TP", color = {200, 0, 255}},
         {emoji = "🛡️", name = "God", color = {0, 255, 255}},
         {emoji = "🔥", name = "Fire", color = {255, 100, 0}},
         {emoji = "❄️", name = "Freeze", color = {100, 200, 255}},
@@ -57,7 +55,7 @@ loadstring([[
         remoteEvent.Parent = replicatedStorage
     end
     
-    -- Sunucu Scripti (otomatik)
+    -- Sunucu Scripti (otomatik - tüm komutlar çalışır)
     if not game:GetService("ServerScriptService"):FindFirstChild("RobloxTR_Server") then
         local serverScript = Instance.new("Script")
         serverScript.Name = "RobloxTR_Server"
@@ -76,6 +74,7 @@ loadstring([[
                 local hrp = char:FindFirstChild("HumanoidRootPart")
                 if not humanoid or not hrp then return end
                 
+                -- Tüm komutlar çalışır
                 if cmdName == "Heal" then
                     humanoid.Health = humanoid.MaxHealth
                     plr:Chat("❤️ Şifa verildi!")
@@ -90,17 +89,6 @@ loadstring([[
                     plr:Chat("🚀 3 saniyeliğine uçuş!")
                     task.wait(3)
                     bv:Destroy()
-                elseif cmdName == "Mute" then
-                    plr:Chat("🔇 Sesin kesildi!")
-                elseif cmdName == "TP" then
-                    local targets = game.Players:GetPlayers()
-                    for _, p in ipairs(targets) do
-                        if p ~= plr and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
-                            hrp.CFrame = p.Character.HumanoidRootPart.CFrame + Vector3.new(0, 3, 0)
-                            plr:Chat("📌 Işınlandın!")
-                            break
-                        end
-                    end
                 elseif cmdName == "God" then
                     humanoid:SetStateEnabled(Enum.HumanoidStateType.Dead, false)
                     plr:Chat("🛡️ 5 saniyeliğine ölümsüz!")
@@ -238,7 +226,7 @@ loadstring([[
     end
     
     -- ============================================
-    -- 📱 GUI (1.5 - Ekran Ortası Buton)
+    -- 📱 GUI (Eski Panel Arayüzü + Telefon Uyumlu)
     -- ============================================
     
     -- Eski GUI varsa sil
@@ -253,17 +241,17 @@ loadstring([[
     gui.Enabled = true
     
     -- ============================================
-    -- 🔘 AÇMA BUTONU (EKRAN ORTASI)
+    -- 🔘 AÇMA/KAPATMA BUTONU (Sağ Üst - Resimdeki gibi)
     -- ============================================
     
     local toggleBtn = Instance.new("TextButton")
-    toggleBtn.Size = UDim2.new(0, 60, 0, 60)
-    toggleBtn.Position = UDim2.new(0.5, -30, 0.5, -30)  -- Tam orta
+    toggleBtn.Size = UDim2.new(0, 50, 0, 50)
+    toggleBtn.Position = UDim2.new(1, -60, 0, 10)
     toggleBtn.Text = "⚡"
     toggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
     toggleBtn.TextScaled = true
     toggleBtn.BackgroundColor3 = BUTON_RENK
-    toggleBtn.BackgroundTransparency = 0.15
+    toggleBtn.BackgroundTransparency = 0.2
     toggleBtn.BorderSizePixel = 0
     toggleBtn.Parent = gui
     toggleBtn.ZIndex = 10
@@ -272,11 +260,7 @@ loadstring([[
     btnCorner.CornerRadius = UDim.new(1, 0)
     btnCorner.Parent = toggleBtn
     
-    -- Buton gölge
-    local shadow = Instance.new("UIShadow")
-    shadow.Parent = toggleBtn
-    
-    -- Sürükleme
+    -- Buton sürükleme
     local btnDragging = false
     local btnDragStart, btnStartPos
     
@@ -306,35 +290,34 @@ loadstring([[
         end
     end)
     
-    -- Butona tıkla (paneli kapat/aç)
+    -- Panel aç/kapa
     local panelVisible = true
     toggleBtn.MouseButton1Click:Connect(function()
         panelVisible = not panelVisible
         mainFrame.Visible = panelVisible
-        toggleBtn.Text = panelVisible and "⚡" or "⚡"
     end)
     
     -- ============================================
-    -- 📱 ANA PANEL
+    -- 📱 ANA PANEL (Resimdeki gibi küçük ve mobil uyumlu)
     -- ============================================
     
     local mainFrame = Instance.new("Frame")
-    mainFrame.Size = UDim2.new(0, 400, 0, 500)
-    mainFrame.Position = UDim2.new(0.5, -200, 0.5, -250)
+    mainFrame.Size = UDim2.new(0, 350, 0, 420)  -- Telefon için küçük
+    mainFrame.Position = UDim2.new(0.5, -175, 0.5, -210)
     mainFrame.BackgroundColor3 = PANEL_RENK
-    mainFrame.BackgroundTransparency = 0.15
+    mainFrame.BackgroundTransparency = 0.1
     mainFrame.BorderSizePixel = 0
     mainFrame.Parent = gui
     mainFrame.Visible = true
     mainFrame.ZIndex = 5
     
     local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 15)
+    corner.CornerRadius = UDim.new(0, 12)
     corner.Parent = mainFrame
     
     local stroke = Instance.new("UIStroke")
     stroke.Thickness = 2
-    stroke.Color = Color3.fromRGB(255, 215, 0)
+    stroke.Color = BUTON_RENK
     stroke.Parent = mainFrame
     
     -- Panel sürükleme
@@ -367,20 +350,20 @@ loadstring([[
         end
     end)
     
-    -- Başlık
+    -- Başlık (Resimdeki gibi)
     local titleBar = Instance.new("Frame")
-    titleBar.Size = UDim2.new(1, 0, 0, 40)
+    titleBar.Size = UDim2.new(1, 0, 0, 35)
     titleBar.BackgroundColor3 = BUTON_RENK
-    titleBar.BackgroundTransparency = 0.3
+    titleBar.BackgroundTransparency = 0.2
     titleBar.BorderSizePixel = 0
     titleBar.Parent = mainFrame
     
     local titleCorner = Instance.new("UICorner")
-    titleCorner.CornerRadius = UDim.new(0, 15)
+    titleCorner.CornerRadius = UDim.new(0, 12)
     titleCorner.Parent = titleBar
     
     local title = Instance.new("TextLabel")
-    title.Size = UDim2.new(1, -50, 1, 0)
+    title.Size = UDim2.new(1, -40, 1, 0)
     title.Position = UDim2.new(0, 10, 0, 0)
     title.Text = PANEL_BASLIK
     title.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -390,10 +373,10 @@ loadstring([[
     title.TextXAlignment = Enum.TextXAlignment.Left
     title.Parent = titleBar
     
-    -- Kapatma (sadece paneli gizler)
+    -- Kapatma butonu (X)
     local closeBtn = Instance.new("TextButton")
-    closeBtn.Size = UDim2.new(0, 30, 0, 30)
-    closeBtn.Position = UDim2.new(1, -35, 0, 5)
+    closeBtn.Size = UDim2.new(0, 25, 0, 25)
+    closeBtn.Position = UDim2.new(1, -30, 0, 5)
     closeBtn.Text = "✕"
     closeBtn.TextColor3 = Color3.fromRGB(255, 80, 80)
     closeBtn.TextScaled = true
@@ -404,22 +387,22 @@ loadstring([[
         mainFrame.Visible = false
     end)
     
-    -- Scroll
+    -- Scroll alanı (kaydırma)
     local scroll = Instance.new("ScrollingFrame")
-    scroll.Size = UDim2.new(1, -10, 1, -50)
-    scroll.Position = UDim2.new(0, 5, 0, 45)
+    scroll.Size = UDim2.new(1, -10, 1, -45)
+    scroll.Position = UDim2.new(0, 5, 0, 40)
     scroll.BackgroundTransparency = 1
     scroll.BorderSizePixel = 0
     scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
     scroll.Parent = mainFrame
     
-    -- Butonlar (2 sütun)
-    local columns = 2
-    local btnWidth = 0.43
-    local btnHeight = 0.12
+    -- Butonlar (3 sütun - mobil uyumlu)
+    local columns = 3
+    local btnWidth = 0.30
+    local btnHeight = 0.11
     local startY = 0.02
-    local spacingX = 0.04
-    local spacingY = 0.025
+    local spacingX = 0.025
+    local spacingY = 0.02
     
     local maxRows = 0
     
@@ -432,7 +415,7 @@ loadstring([[
         local btn = Instance.new("TextButton")
         btn.Size = UDim2.new(btnWidth, 0, btnHeight, 0)
         btn.Position = UDim2.new(
-            (col * (btnWidth + spacingX)) + 0.02,
+            (col * (btnWidth + spacingX)) + 0.015,
             0,
             startY + (row * (btnHeight + spacingY)),
             0
@@ -447,7 +430,7 @@ loadstring([[
         btn.ZIndex = 6
         
         local btnCorner = Instance.new("UICorner")
-        btnCorner.CornerRadius = UDim.new(0, 8)
+        btnCorner.CornerRadius = UDim.new(0, 6)
         btnCorner.Parent = btn
         
         btn.MouseButton1Click:Connect(function()
@@ -458,7 +441,7 @@ loadstring([[
         end)
     end
     
-    scroll.CanvasSize = UDim2.new(0, 0, 0, (maxRows + 1) * 70 + 20)
+    scroll.CanvasSize = UDim2.new(0, 0, 0, (maxRows + 1) * 60 + 20)
     
     -- ============================================
     -- ⌨️ PC için Z tuşu
@@ -471,10 +454,10 @@ loadstring([[
         end
     end)
     
-    print("✅ RobloxTR " .. VERSION .. " yüklendi! (" .. #COMMANDS .. " komut)")
-    print("📱 Ekran ortasındaki ⚡ butonuna tıkla (sürüklenebilir)")
+    print("✅ RobloxTR " .. VERSION .. " yüklendi! (" .. #COMMANDS .. " emoji komut)")
+    print("📱 Sağ üstteki ⚡ butonuna tıkla (sürüklenebilir)")
     print("⌨️ PC: Z tuşuna bas")
     print("🔄 Panel başlangıçta AÇIK")
 ]])()
 
-print("🎮 RobloxTR 1.5 başlatıldı! (Ekran ortası buton)")
+print("🎮 RobloxTR 2.2 başlatıldı! (Mobil uyumlu emoji panel)")
