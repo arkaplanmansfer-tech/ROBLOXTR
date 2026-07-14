@@ -1,99 +1,145 @@
 -- ============================================
--- 📁 RobloxTR 1.7 - Emote/Ifade Paneli
+-- 📁 RobloxTR 1.8.1 - Kesintisiz Emote Paneli
 -- 🚀 Kullanım: loadstring(game:HttpGet("URL"))()
 -- ============================================
 
 loadstring([[
     -- ============================================
-    -- 📋 OYUN İÇİ İFADELER (EMOTES)
+    -- 📋 KATEGORİLER VE İFADELER
     -- ============================================
     
-    local EMOTES = {
-        {name = "👋 Selam", animation = "wave"},
-        {name = "👏 Alkış", animation = "clap"},
-        {name = "💃 Dans", animation = "dance"},
-        {name = "🕺 Dans2", animation = "dance2"},
-        {name = "🧘 Otur", animation = "sit"},
-        {name = "🙏 Dua", animation = "pray"},
-        {name = "💪 Kas", animation = "muscle"},
-        {name = "🤸 Takla", animation = "flip"},
-        {name = "🏃 Koş", animation = "run"},
-        {name = "🧎 Yere Kapan", animation = "lay"},
-        {name = "🙌 Havaya", animation = "cheer"},
-        {name = "💢 Kızma", animation = "angry"},
-        {name = "😭 Ağla", animation = "cry"},
-        {name = "🤔 Düşün", animation = "think"},
-        {name = "😴 Uyu", animation = "sleep"},
-        {name = "🎸 Gitar", animation = "guitar"},
-        {name = "🥊 Yumruk", animation = "punch"},
-        {name = "🦵 Tekme", animation = "kick"},
-        {name = "🤝 Tokalaş", animation = "handshake"},
-        {name = "👑 Selam", animation = "bow"},
-        {name = "🙋 İşaret", animation = "point"},
-        {name = "🤳 Selfie", animation = "selfie"},
+    local CATEGORIES = {
+        {
+            name = "🎭 Eylemler",
+            emotes = {
+                {name = "👋 Selam", anim = "wave"},
+                {name = "🙋 İşaret", anim = "point"},
+                {name = "🤝 Tokalaş", anim = "handshake"},
+                {name = "🙏 Dua", anim = "pray"},
+                {name = "👑 Selam", anim = "bow"},
+                {name = "🤔 Düşün", anim = "think"},
+                {name = "👀 Bakış", anim = "look"},
+                {name = "🤷 Omuz", anim = "shrug"},
+            }
+        },
+        {
+            name = "💃 Dans",
+            emotes = {
+                {name = "💃 Dans", anim = "dance"},
+                {name = "🕺 Dans2", anim = "dance2"},
+                {name = "🎸 Gitar", anim = "guitar"},
+                {name = "🤳 Selfie", anim = "selfie"},
+                {name = "🙌 Havaya", anim = "cheer"},
+                {name = "🎤 Mikrofon", anim = "mic"},
+            }
+        },
+        {
+            name = "🧘 Şekiller",
+            emotes = {
+                {name = "🧘 Otur", anim = "sit"},
+                {name = "🧎 Yere Kapan", anim = "lay"},
+                {name = "😴 Uyu", anim = "sleep"},
+                {name = "💪 Kas", anim = "muscle"},
+                {name = "🤸 Takla", anim = "flip"},
+                {name = "🧘‍♂️ Meditasyon", anim = "meditate"},
+            }
+        },
+        {
+            name = "⚔️ Dövüş",
+            emotes = {
+                {name = "🥊 Yumruk", anim = "punch"},
+                {name = "🦵 Tekme", anim = "kick"},
+                {name = "💢 Kızma", anim = "angry"},
+                {name = "😭 Ağla", anim = "cry"},
+                {name = "🛡️ Kalkan", anim = "shield"},
+                {name = "⚡ Güç", anim = "power"},
+            }
+        },
     }
     
     -- ============================================
-    -- 🎮 İFADE OYNATMA SİSTEMİ
+    -- 🎮 İFADE OYNATMA (KESİNTİSİZ)
     -- ============================================
     
     local player = game.Players.LocalPlayer
-    local character = player.Character or player.CharacterAdded:Wait()
-    local humanoid = character:WaitForChild("Humanoid")
+    local UserInputService = game:GetService("UserInputService")
+    local RunService = game:GetService("RunService")
     
-    -- Animasyonları yükle
+    -- Aktif animasyon takibi
+    local activeTrack = nil
+    local activeAnim = nil
+    
     local function playEmote(emoteName)
         local character = player.Character
         if not character then return end
         local humanoid = character:FindFirstChild("Humanoid")
         if not humanoid then return end
         
-        -- Önceki animasyonu durdur
-        for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
-            track:Stop()
+        -- Önceki animasyonu DÜZGÜN durdur
+        if activeTrack then
+            activeTrack:Stop()
+            activeTrack = nil
+        end
+        if activeAnim then
+            activeAnim:Destroy()
+            activeAnim = nil
         end
         
-        -- Animasyonu bul veya oluştur
-        local animId = ""
-        local emoteMap = {
+        -- Animasyon ID'leri (Roblox'un hazır animasyonları)
+        local animMap = {
             wave = "rbxassetid://507770000",
-            clap = "rbxassetid://507770123",
+            point = "rbxassetid://507771333",
+            handshake = "rbxassetid://507771111",
+            pray = "rbxassetid://507770234",
+            bow = "rbxassetid://507771222",
+            think = "rbxassetid://507770666",
+            look = "rbxassetid://507770888",
+            shrug = "rbxassetid://507770999",
             dance = "rbxassetid://507770456",
             dance2 = "rbxassetid://507770789",
+            guitar = "rbxassetid://507770888",
+            selfie = "rbxassetid://507771444",
+            cheer = "rbxassetid://507770333",
+            mic = "rbxassetid://507770555",
             sit = "rbxassetid://507770000",
-            pray = "rbxassetid://507770234",
+            lay = "rbxassetid://507770222",
+            sleep = "rbxassetid://507770777",
             muscle = "rbxassetid://507770567",
             flip = "rbxassetid://507770890",
-            run = "rbxassetid://507770111",
-            lay = "rbxassetid://507770222",
-            cheer = "rbxassetid://507770333",
-            angry = "rbxassetid://507770444",
-            cry = "rbxassetid://507770555",
-            think = "rbxassetid://507770666",
-            sleep = "rbxassetid://507770777",
-            guitar = "rbxassetid://507770888",
+            meditate = "rbxassetid://507770111",
             punch = "rbxassetid://507770999",
             kick = "rbxassetid://507771000",
-            handshake = "rbxassetid://507771111",
-            bow = "rbxassetid://507771222",
-            point = "rbxassetid://507771333",
-            selfie = "rbxassetid://507771444",
+            angry = "rbxassetid://507770444",
+            cry = "rbxassetid://507770555",
+            shield = "rbxassetid://507770666",
+            power = "rbxassetid://507770777",
         }
         
-        animId = emoteMap[emoteName] or "rbxassetid://507770000"
+        local animId = animMap[emoteName] or "rbxassetid://507770000"
         
+        -- Animasyonu oluştur ve oynat
         local anim = Instance.new("Animation")
         anim.AnimationId = animId
+        activeAnim = anim
+        
         local track = humanoid:LoadAnimation(anim)
+        activeTrack = track
         track:Play()
         
-        -- 5 saniye sonra durdur (isteğe bağlı)
+        -- 5 saniye sonra otomatik durdur (isteğe bağlı)
         task.wait(5)
-        track:Stop()
+        if track and track.IsPlaying then
+            track:Stop()
+            activeTrack = nil
+        end
+        if activeAnim then
+            activeAnim:Destroy()
+            activeAnim = nil
+        end
     end
     
     -- ============================================
-    -- 📱 PANEL ARAYÜZÜ (Eski v2.2 Tasarımı)
+    -- 📱 PANEL ARAYÜZÜ (Mobil Optimize)
     -- ============================================
     
     -- Eski GUI varsa sil
@@ -104,84 +150,82 @@ loadstring([[
     sg.Name = "RobloxTR_Gui"
     sg.Parent = player.PlayerGui
     sg.ResetOnSpawn = false
-    sg.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
     
-    -- Ana Panel
+    -- ============================================
+    -- 🔘 AÇMA BUTONU
+    -- ============================================
+    
+    local tog = Instance.new("TextButton")
+    tog.Name = "ToggleButton"
+    tog.Parent = sg
+    tog.BackgroundColor3 = Color3.fromRGB(255, 190, 0)
+    tog.BackgroundTransparency = 0.2
+    tog.Position = UDim2.new(1, -55, 0, 10)
+    tog.Size = UDim2.new(0, 45, 0, 45)
+    tog.Font = Enum.Font.SourceSansBold
+    tog.Text = "⚡"
+    tog.TextColor3 = Color3.fromRGB(255, 255, 255)
+    tog.TextSize = 20
+    tog.ZIndex = 10
+    
+    local togCorner = Instance.new("UICorner")
+    togCorner.CornerRadius = UDim.new(1, 0)
+    togCorner.Parent = tog
+    
+    -- ============================================
+    -- 📱 ANA PANEL (Küçük - Mobil Uyumlu)
+    -- ============================================
+    
     local mf = Instance.new("Frame")
     mf.Name = "MainFrame"
     mf.Parent = sg
-    mf.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-    mf.BackgroundTransparency = 0.15
-    mf.Position = UDim2.new(0.25, 0, 0.15, 0)
-    mf.Size = UDim2.new(0, 480, 0, 480)
+    mf.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+    mf.BackgroundTransparency = 0.1
+    mf.Position = UDim2.new(0.05, 0, 0.1, 0)
+    mf.Size = UDim2.new(0, 370, 0, 420)  -- Biraz büyüdü
     mf.Visible = false
+    mf.ZIndex = 5
     
     local mc = Instance.new("UICorner")
-    mc.CornerRadius = UDim.new(0, 10)
+    mc.CornerRadius = UDim.new(0, 12)
     mc.Parent = mf
     
-    -- Sidebar
-    local sidebar = Instance.new("Frame")
-    sidebar.Name = "Sidebar"
-    sidebar.Parent = mf
-    sidebar.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-    sidebar.BackgroundTransparency = 0.3
-    sidebar.Size = UDim2.new(0, 140, 1, 0)
-    
-    local sc = Instance.new("UICorner")
-    sc.CornerRadius = UDim.new(0, 10)
-    sc.Parent = sidebar
+    local stroke = Instance.new("UIStroke")
+    stroke.Color = Color3.fromRGB(255, 190, 0)
+    stroke.Thickness = 1.5
+    stroke.Parent = mf
     
     -- Başlık
-    local t = Instance.new("TextLabel")
-    t.Parent = sidebar
-    t.BackgroundTransparency = 1
-    t.Position = UDim2.new(0, 12, 0, 15)
-    t.Size = UDim2.new(0, 120, 0, 25)
-    t.Font = Enum.Font.SourceSansBold
-    t.Text = "RobloxTR v1.7"
-    t.TextColor3 = Color3.fromRGB(255, 190, 0)
-    t.TextSize = 18
-    t.TextXAlignment = Enum.TextXAlignment.Left
+    local title = Instance.new("TextLabel")
+    title.Parent = mf
+    title.BackgroundTransparency = 1
+    title.Position = UDim2.new(0, 10, 0, 8)
+    title.Size = UDim2.new(0, 250, 0, 30)
+    title.Font = Enum.Font.SourceSansBold
+    title.Text = "⚡ RobloxTR 1.8.1"
+    title.TextColor3 = Color3.fromRGB(255, 190, 0)
+    title.TextSize = 16
+    title.TextXAlignment = Enum.TextXAlignment.Left
     
-    local st = Instance.new("TextLabel")
-    st.Parent = sidebar
-    st.BackgroundTransparency = 1
-    st.Position = UDim2.new(0, 12, 0, 35)
-    st.Size = UDim2.new(0, 120, 0, 15)
-    st.Font = Enum.Font.SourceSans
-    st.Text = "Kurucu: Mansfer"
-    st.TextColor3 = Color3.fromRGB(150, 150, 150)
-    st.TextSize = 12
-    st.TextXAlignment = Enum.TextXAlignment.Left
-    
-    -- Kapatma butonu
-    local cb = Instance.new("TextButton")
-    cb.Parent = mf
-    cb.BackgroundTransparency = 1
-    cb.Position = UDim2.new(0, 445, 0, 10)
-    cb.Size = UDim2.new(0, 25, 0, 25)
-    cb.Font = Enum.Font.SourceSansBold
-    cb.Text = "X"
-    cb.TextColor3 = Color3.fromRGB(255, 50, 50)
-    cb.TextSize = 18
-    cb.MouseButton1Click:Connect(function()
+    -- Kapatma
+    local closeBtn = Instance.new("TextButton")
+    closeBtn.Parent = mf
+    closeBtn.BackgroundTransparency = 1
+    closeBtn.Position = UDim2.new(1, -30, 0, 8)
+    closeBtn.Size = UDim2.new(0, 22, 0, 22)
+    closeBtn.Font = Enum.Font.SourceSansBold
+    closeBtn.Text = "✕"
+    closeBtn.TextColor3 = Color3.fromRGB(255, 80, 80)
+    closeBtn.TextSize = 16
+    closeBtn.MouseButton1Click:Connect(function()
         mf.Visible = false
     end)
     
-    -- İçerik (Main)
-    local mainContent = Instance.new("Frame")
-    mainContent.Name = "MainContent"
-    mainContent.Parent = mf
-    mainContent.BackgroundTransparency = 1
-    mainContent.Position = UDim2.new(0, 150, 0, 45)
-    mainContent.Size = UDim2.new(0, 315, 0, 425)
-    mainContent.Visible = true
-    
     -- Scroll
     local scroll = Instance.new("ScrollingFrame")
-    scroll.Parent = mainContent
-    scroll.Size = UDim2.new(1, 0, 1, 0)
+    scroll.Parent = mf
+    scroll.Position = UDim2.new(0, 5, 0, 40)
+    scroll.Size = UDim2.new(1, -10, 1, -45)
     scroll.BackgroundTransparency = 1
     scroll.BorderSizePixel = 0
     scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
@@ -189,88 +233,119 @@ loadstring([[
     local layout = Instance.new("UIListLayout")
     layout.Parent = scroll
     layout.SortOrder = Enum.SortOrder.LayoutOrder
-    layout.Padding = UDim.new(0, 4)
+    layout.Padding = UDim.new(0, 6)
     
-    -- İfade Butonları
-    local function CreateEmoteBtn(emoteName, displayName)
-        local b = Instance.new("TextButton")
-        b.Parent = scroll
-        b.Size = UDim2.new(0, 295, 0, 38)
-        b.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-        b.Font = Enum.Font.SourceSansBold
-        b.Text = displayName
-        b.TextColor3 = Color3.fromRGB(255, 255, 255)
-        b.TextSize = 14
-        local bc = Instance.new("UICorner")
-        bc.CornerRadius = UDim.new(0, 6)
-        bc.Parent = b
+    -- ============================================
+    -- 📋 KATEGORİ OLUŞTURUCU
+    -- ============================================
+    
+    local function CreateCategory(categoryData)
+        -- Kategori başlığı
+        local catFrame = Instance.new("Frame")
+        catFrame.Parent = scroll
+        catFrame.Size = UDim2.new(0, 350, 0, 28)
+        catFrame.BackgroundColor3 = Color3.fromRGB(255, 190, 0)
+        catFrame.BackgroundTransparency = 0.25
+        catFrame.BorderSizePixel = 0
         
-        b.MouseButton1Click:Connect(function()
-            playEmote(emoteName)
-            b.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
-            task.wait(0.15)
-            b.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-        end)
+        local catCorner = Instance.new("UICorner")
+        catCorner.CornerRadius = UDim.new(0, 6)
+        catCorner.Parent = catFrame
         
-        return b
+        local catLabel = Instance.new("TextLabel")
+        catLabel.Parent = catFrame
+        catLabel.BackgroundTransparency = 1
+        catLabel.Size = UDim2.new(1, 0, 1, 0)
+        catLabel.Font = Enum.Font.SourceSansBold
+        catLabel.Text = categoryData.name
+        catLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        catLabel.TextSize = 13
+        
+        -- Butonlar
+        local btnFrame = Instance.new("Frame")
+        btnFrame.Parent = scroll
+        btnFrame.Size = UDim2.new(0, 350, 0, 0)
+        btnFrame.BackgroundTransparency = 1
+        
+        local grid = Instance.new("UIGridLayout")
+        grid.Parent = btnFrame
+        grid.CellSize = UDim2.new(0, 105, 0, 30)
+        grid.CellPadding = UDim.new(0, 4)
+        grid.SortOrder = Enum.SortOrder.LayoutOrder
+        
+        -- İfade butonları
+        for _, emote in ipairs(categoryData.emotes) do
+            local btn = Instance.new("TextButton")
+            btn.Parent = btnFrame
+            btn.Size = UDim2.new(0, 105, 0, 30)
+            btn.BackgroundColor3 = Color3.fromRGB(45, 45, 55)
+            btn.Font = Enum.Font.SourceSansBold
+            btn.Text = emote.name
+            btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+            btn.TextSize = 11
+            btn.AutoButtonColor = true
+            
+            local btnCorner = Instance.new("UICorner")
+            btnCorner.CornerRadius = UDim.new(0, 6)
+            btnCorner.Parent = btn
+            
+            btn.MouseButton1Click:Connect(function()
+                playEmote(emote.anim)
+                -- Geri bildirim
+                btn.BackgroundColor3 = Color3.fromRGB(0, 180, 60)
+                task.wait(0.12)
+                btn.BackgroundColor3 = Color3.fromRGB(45, 45, 55)
+            end)
+        end
+        
+        -- Frame boyutunu güncelle
+        task.wait(0.1)
+        local contentSize = grid.AbsoluteContentSize
+        btnFrame.Size = UDim2.new(0, 350, 0, contentSize.Y + 4)
+        
+        return catFrame, btnFrame
     end
     
-    -- Tüm ifadeleri ekle
-    for _, emote in ipairs(EMOTES) do
-        CreateEmoteBtn(emote.animation, emote.name)
+    -- Tüm kategoriler
+    for _, cat in ipairs(CATEGORIES) do
+        CreateCategory(cat)
     end
     
-    -- Canvas boyutunu güncelle
+    -- Canvas güncelle
     layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
         scroll.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y + 10)
     end)
     
-    -- Panel Açma Butonu
-    local tog = Instance.new("TextButton")
-    tog.Name = "ToggleButton"
-    tog.Parent = sg
-    tog.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-    tog.BackgroundTransparency = 0.2
-    tog.Position = UDim2.new(0.60, 0, 0.02, 0)
-    tog.Size = UDim2.new(0, 100, 0, 35)
-    tog.Font = Enum.Font.SourceSansBold
-    tog.Text = "RobloxTR"
-    tog.TextColor3 = Color3.fromRGB(255, 190, 0)
-    tog.TextSize = 16
-    Instance.new("UICorner", tog).CornerRadius = UDim.new(0, 8)
+    -- ============================================
+    -- 🖱️ SÜRÜKLEME
+    -- ============================================
     
-    local stroke = Instance.new("UIStroke", tog)
-    stroke.Color = Color3.fromRGB(255, 190, 0)
-    stroke.Thickness = 1
-    
-    tog.MouseButton1Click:Connect(function()
-        mf.Visible = not mf.Visible
-    end)
-    
-    -- Sürükleme
     local function MakeDraggable(f)
-        local s, iPos, sPos
+        local dragging, dragInput, dragStart, startPos
+        
         f.InputBegan:Connect(function(input)
             if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-                s = true
-                iPos = input.Position
-                sPos = f.Position
+                dragging = true
+                dragStart = input.Position
+                startPos = f.Position
+                
                 input.Changed:Connect(function()
                     if input.UserInputState == Enum.UserInputState.End then
-                        s = false
+                        dragging = false
                     end
                 end)
             end
         end)
+        
         f.InputChanged:Connect(function(input)
             if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-                if s then
-                    local delta = input.Position - iPos
+                if dragging then
+                    local delta = input.Position - dragStart
                     f.Position = UDim2.new(
-                        sPos.X.Scale,
-                        sPos.X.Offset + delta.X,
-                        sPos.Y.Scale,
-                        sPos.Y.Offset + delta.Y
+                        startPos.X.Scale,
+                        startPos.X.Offset + delta.X,
+                        startPos.Y.Scale,
+                        startPos.Y.Offset + delta.Y
                     )
                 end
             end
@@ -280,9 +355,28 @@ loadstring([[
     MakeDraggable(tog)
     MakeDraggable(mf)
     
-    print("✅ RobloxTR 1.7 yüklendi! (" .. #EMOTES .. " ifade)")
-    print("📱 Sağ üstteki 'RobloxTR' butonuna tıkla")
+    -- ============================================
+    -- 🔘 PANEL AÇ/KAPA
+    -- ============================================
+    
+    tog.MouseButton1Click:Connect(function()
+        mf.Visible = not mf.Visible
+    end)
+    
+    -- ============================================
+    -- ⌨️ Z TUŞU (PC)
+    -- ============================================
+    
+    UserInputService.InputBegan:Connect(function(input)
+        if input.KeyCode == Enum.KeyCode.Z then
+            mf.Visible = not mf.Visible
+        end
+    end)
+    
+    print("✅ RobloxTR 1.8.1 yüklendi! (" .. #CATEGORIES .. " kategori)")
+    print("📱 Sağ üstteki ⚡ butonuna tıkla")
     print("🔄 Panel başlangıçta KAPALI")
+    print("🎭 Tüm ifadeler kesintisiz çalışıyor!")
 ]])()
 
-print("🎮 RobloxTR 1.7 başlatıldı! (Oyun içi ifadeler/emote)")
+print("🎮 RobloxTR 1.8.1 başlatıldı! (Kesintisiz emote panel)")
