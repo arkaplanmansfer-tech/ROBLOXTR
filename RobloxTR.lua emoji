@@ -1,463 +1,288 @@
 -- ============================================
--- 📁 RobloxTR 2.2 - Emoji Panel (Mobil Uyumlu)
+-- 📁 RobloxTR 1.7 - Emote/Ifade Paneli
 -- 🚀 Kullanım: loadstring(game:HttpGet("URL"))()
 -- ============================================
 
 loadstring([[
-    -- 🔧 AYARLAR
-    local VERSION = "2.2"
-    local PANEL_BASLIK = "⚡ RobloxTR " .. VERSION .. " ⚡"
-    local PANEL_RENK = Color3.fromRGB(20, 20, 35)
-    local BUTON_RENK = Color3.fromRGB(255, 215, 0)
+    -- ============================================
+    -- 📋 OYUN İÇİ İFADELER (EMOTES)
+    -- ============================================
     
-    -- 📋 EMOJI KOMUTLAR (Resimdeki gibi düzenlendi)
-    local COMMANDS = {
-        {emoji = "❤️", name = "Heal", color = {0, 255, 100}},
-        {emoji = "💀", name = "Kill", color = {255, 0, 0}},
-        {emoji = "🚀", name = "Fly", color = {0, 150, 255}},
-        {emoji = "🛡️", name = "God", color = {0, 255, 255}},
-        {emoji = "🔥", name = "Fire", color = {255, 100, 0}},
-        {emoji = "❄️", name = "Freeze", color = {100, 200, 255}},
-        {emoji = "💨", name = "Speed", color = {200, 200, 255}},
-        {emoji = "🌀", name = "Spin", color = {150, 0, 255}},
-        {emoji = "⭐", name = "Star", color = {255, 215, 0}},
-        {emoji = "🌙", name = "Moon", color = {200, 200, 200}},
-        {emoji = "⚡", name = "Lightning", color = {255, 255, 0}},
-        {emoji = "🌈", name = "Rainbow", color = {255, 0, 255}},
-        {emoji = "🎮", name = "Game", color = {0, 255, 0}},
-        {emoji = "🎯", name = "Aim", color = {255, 0, 100}},
-        {emoji = "🧊", name = "Ice", color = {0, 200, 255}},
-        {emoji = "🌋", name = "Lava", color = {255, 100, 0}},
-        {emoji = "🦅", name = "Eagle", color = {150, 150, 255}},
-        {emoji = "🐉", name = "Dragon", color = {200, 0, 200}},
-        {emoji = "👾", name = "Alien", color = {0, 255, 100}},
-        {emoji = "🤖", name = "Robot", color = {100, 100, 200}},
-        {emoji = "🧙", name = "Wizard", color = {150, 0, 255}},
-        {emoji = "🦸", name = "Hero", color = {255, 215, 0}},
-        {emoji = "💎", name = "Diamond", color = {0, 255, 255}},
-        {emoji = "🔮", name = "Crystal", color = {200, 0, 255}},
+    local EMOTES = {
+        {name = "👋 Selam", animation = "wave"},
+        {name = "👏 Alkış", animation = "clap"},
+        {name = "💃 Dans", animation = "dance"},
+        {name = "🕺 Dans2", animation = "dance2"},
+        {name = "🧘 Otur", animation = "sit"},
+        {name = "🙏 Dua", animation = "pray"},
+        {name = "💪 Kas", animation = "muscle"},
+        {name = "🤸 Takla", animation = "flip"},
+        {name = "🏃 Koş", animation = "run"},
+        {name = "🧎 Yere Kapan", animation = "lay"},
+        {name = "🙌 Havaya", animation = "cheer"},
+        {name = "💢 Kızma", animation = "angry"},
+        {name = "😭 Ağla", animation = "cry"},
+        {name = "🤔 Düşün", animation = "think"},
+        {name = "😴 Uyu", animation = "sleep"},
+        {name = "🎸 Gitar", animation = "guitar"},
+        {name = "🥊 Yumruk", animation = "punch"},
+        {name = "🦵 Tekme", animation = "kick"},
+        {name = "🤝 Tokalaş", animation = "handshake"},
+        {name = "👑 Selam", animation = "bow"},
+        {name = "🙋 İşaret", animation = "point"},
+        {name = "🤳 Selfie", animation = "selfie"},
     }
     
     -- ============================================
-    -- 🎮 SİSTEM
+    -- 🎮 İFADE OYNATMA SİSTEMİ
     -- ============================================
     
     local player = game.Players.LocalPlayer
-    local replicatedStorage = game:GetService("ReplicatedStorage")
-    local UserInputService = game:GetService("UserInputService")
-    local TweenService = game:GetService("TweenService")
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoid = character:WaitForChild("Humanoid")
     
-    -- RemoteEvent
-    local remoteEvent = replicatedStorage:FindFirstChild("RobloxTR_Event")
-    if not remoteEvent then
-        remoteEvent = Instance.new("RemoteEvent")
-        remoteEvent.Name = "RobloxTR_Event"
-        remoteEvent.Parent = replicatedStorage
-    end
-    
-    -- Sunucu Scripti (otomatik - tüm komutlar çalışır)
-    if not game:GetService("ServerScriptService"):FindFirstChild("RobloxTR_Server") then
-        local serverScript = Instance.new("Script")
-        serverScript.Name = "RobloxTR_Server"
-        serverScript.Source = [=[
-            local remoteEvent = game:GetService("ReplicatedStorage"):FindFirstChild("RobloxTR_Event")
-            if not remoteEvent then
-                remoteEvent = Instance.new("RemoteEvent")
-                remoteEvent.Name = "RobloxTR_Event"
-                remoteEvent.Parent = game:GetService("ReplicatedStorage")
-            end
-            
-            remoteEvent.OnServerEvent:Connect(function(plr, cmdName)
-                local char = plr.Character
-                if not char then return end
-                local humanoid = char:FindFirstChild("Humanoid")
-                local hrp = char:FindFirstChild("HumanoidRootPart")
-                if not humanoid or not hrp then return end
-                
-                -- Tüm komutlar çalışır
-                if cmdName == "Heal" then
-                    humanoid.Health = humanoid.MaxHealth
-                    plr:Chat("❤️ Şifa verildi!")
-                elseif cmdName == "Kill" then
-                    humanoid.Health = 0
-                    plr:Chat("💀 Öldürüldün!")
-                elseif cmdName == "Fly" then
-                    local bv = Instance.new("BodyVelocity")
-                    bv.Velocity = Vector3.new(0, 50, 0)
-                    bv.MaxForce = Vector3.new(0, 4000, 0)
-                    bv.Parent = hrp
-                    plr:Chat("🚀 3 saniyeliğine uçuş!")
-                    task.wait(3)
-                    bv:Destroy()
-                elseif cmdName == "God" then
-                    humanoid:SetStateEnabled(Enum.HumanoidStateType.Dead, false)
-                    plr:Chat("🛡️ 5 saniyeliğine ölümsüz!")
-                    task.wait(5)
-                    humanoid:SetStateEnabled(Enum.HumanoidStateType.Dead, true)
-                elseif cmdName == "Fire" then
-                    local fire = Instance.new("Fire")
-                    fire.Size = 5
-                    fire.Parent = hrp
-                    plr:Chat("🔥 Ateşe verildin!")
-                    task.wait(3)
-                    fire:Destroy()
-                elseif cmdName == "Freeze" then
-                    local bv = Instance.new("BodyVelocity")
-                    bv.Velocity = Vector3.new(0, 0, 0)
-                    bv.MaxForce = Vector3.new(1, 1, 1) * 1e9
-                    bv.Parent = hrp
-                    plr:Chat("❄️ Donduruldun!")
-                    task.wait(3)
-                    bv:Destroy()
-                elseif cmdName == "Speed" then
-                    humanoid.WalkSpeed = 50
-                    plr:Chat("💨 Hızlandın!")
-                    task.wait(5)
-                    humanoid.WalkSpeed = 16
-                elseif cmdName == "Spin" then
-                    plr:Chat("🌀 Dönüyorsun!")
-                    for i = 1, 10 do
-                        hrp.CFrame = hrp.CFrame * CFrame.Angles(0, math.rad(36), 0)
-                        task.wait(0.05)
-                    end
-                elseif cmdName == "Star" then
-                    local att = Instance.new("Attachment")
-                    att.Parent = hrp
-                    local glow = Instance.new("PointLight")
-                    glow.Color = Color3.fromRGB(255, 215, 0)
-                    glow.Range = 20
-                    glow.Brightness = 5
-                    glow.Parent = att
-                    plr:Chat("⭐ Yıldız oldun!")
-                    task.wait(3)
-                    att:Destroy()
-                elseif cmdName == "Moon" then
-                    local att = Instance.new("Attachment")
-                    att.Parent = hrp
-                    local glow = Instance.new("PointLight")
-                    glow.Color = Color3.fromRGB(200, 200, 255)
-                    glow.Range = 15
-                    glow.Brightness = 3
-                    glow.Parent = att
-                    plr:Chat("🌙 Ay ışığı!")
-                    task.wait(3)
-                    att:Destroy()
-                elseif cmdName == "Lightning" then
-                    local bv = Instance.new("BodyVelocity")
-                    bv.Velocity = Vector3.new(0, 100, 0)
-                    bv.MaxForce = Vector3.new(0, 8000, 0)
-                    bv.Parent = hrp
-                    plr:Chat("⚡ Yıldırım hızı!")
-                    task.wait(2)
-                    bv:Destroy()
-                elseif cmdName == "Rainbow" then
-                    for i = 1, 10 do
-                        hrp.BrickColor = BrickColor.Random()
-                        task.wait(0.1)
-                    end
-                    plr:Chat("🌈 Gökkuşağı oldun!")
-                elseif cmdName == "Game" then
-                    plr:Chat("🎮 Oyun modu aktif!")
-                elseif cmdName == "Aim" then
-                    plr:Chat("🎯 Hedef belirlendi!")
-                elseif cmdName == "Ice" then
-                    local bv = Instance.new("BodyVelocity")
-                    bv.Velocity = Vector3.new(0, 0, 0)
-                    bv.MaxForce = Vector3.new(1, 1, 1) * 1e9
-                    bv.Parent = hrp
-                    hrp.BrickColor = BrickColor.new("Bright blue")
-                    plr:Chat("🧊 Buz tuttu!")
-                    task.wait(3)
-                    bv:Destroy()
-                    hrp.BrickColor = BrickColor.new("Medium stone grey")
-                elseif cmdName == "Lava" then
-                    hrp.BrickColor = BrickColor.new("Bright red")
-                    plr:Chat("🌋 Lav oldun!")
-                    task.wait(3)
-                    hrp.BrickColor = BrickColor.new("Medium stone grey")
-                elseif cmdName == "Eagle" then
-                    local bv = Instance.new("BodyVelocity")
-                    bv.Velocity = Vector3.new(0, 30, 0)
-                    bv.MaxForce = Vector3.new(0, 3000, 0)
-                    bv.Parent = hrp
-                    plr:Chat("🦅 Kartal gibi uç!")
-                    task.wait(4)
-                    bv:Destroy()
-                elseif cmdName == "Dragon" then
-                    local fire = Instance.new("Fire")
-                    fire.Size = 10
-                    fire.Parent = hrp
-                    plr:Chat("🐉 Ejderha ateşi!")
-                    task.wait(4)
-                    fire:Destroy()
-                elseif cmdName == "Alien" then
-                    hrp.BrickColor = BrickColor.new("Bright green")
-                    plr:Chat("👾 Uzaylı oldun!")
-                    task.wait(3)
-                    hrp.BrickColor = BrickColor.new("Medium stone grey")
-                elseif cmdName == "Robot" then
-                    hrp.BrickColor = BrickColor.new("Dark grey")
-                    plr:Chat("🤖 Robot modu!")
-                    task.wait(3)
-                    hrp.BrickColor = BrickColor.new("Medium stone grey")
-                elseif cmdName == "Wizard" then
-                    plr:Chat("🧙 Büyü yapıldı!")
-                elseif cmdName == "Hero" then
-                    humanoid.Health = humanoid.MaxHealth
-                    plr:Chat("🦸 Kahraman oldun!")
-                elseif cmdName == "Diamond" then
-                    hrp.BrickColor = BrickColor.new("Really blue")
-                    plr:Chat("💎 Elmas oldun!")
-                    task.wait(3)
-                    hrp.BrickColor = BrickColor.new("Medium stone grey")
-                elseif cmdName == "Crystal" then
-                    local glow = Instance.new("PointLight")
-                    glow.Color = Color3.fromRGB(200, 0, 255)
-                    glow.Range = 20
-                    glow.Brightness = 10
-                    glow.Parent = hrp
-                    plr:Chat("🔮 Kristal ışığı!")
-                    task.wait(3)
-                    glow:Destroy()
-                end
-            end)
-        ]=]
-        serverScript.Parent = game:GetService("ServerScriptService")
+    -- Animasyonları yükle
+    local function playEmote(emoteName)
+        local character = player.Character
+        if not character then return end
+        local humanoid = character:FindFirstChild("Humanoid")
+        if not humanoid then return end
+        
+        -- Önceki animasyonu durdur
+        for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
+            track:Stop()
+        end
+        
+        -- Animasyonu bul veya oluştur
+        local animId = ""
+        local emoteMap = {
+            wave = "rbxassetid://507770000",
+            clap = "rbxassetid://507770123",
+            dance = "rbxassetid://507770456",
+            dance2 = "rbxassetid://507770789",
+            sit = "rbxassetid://507770000",
+            pray = "rbxassetid://507770234",
+            muscle = "rbxassetid://507770567",
+            flip = "rbxassetid://507770890",
+            run = "rbxassetid://507770111",
+            lay = "rbxassetid://507770222",
+            cheer = "rbxassetid://507770333",
+            angry = "rbxassetid://507770444",
+            cry = "rbxassetid://507770555",
+            think = "rbxassetid://507770666",
+            sleep = "rbxassetid://507770777",
+            guitar = "rbxassetid://507770888",
+            punch = "rbxassetid://507770999",
+            kick = "rbxassetid://507771000",
+            handshake = "rbxassetid://507771111",
+            bow = "rbxassetid://507771222",
+            point = "rbxassetid://507771333",
+            selfie = "rbxassetid://507771444",
+        }
+        
+        animId = emoteMap[emoteName] or "rbxassetid://507770000"
+        
+        local anim = Instance.new("Animation")
+        anim.AnimationId = animId
+        local track = humanoid:LoadAnimation(anim)
+        track:Play()
+        
+        -- 5 saniye sonra durdur (isteğe bağlı)
+        task.wait(5)
+        track:Stop()
     end
     
     -- ============================================
-    -- 📱 GUI (Eski Panel Arayüzü + Telefon Uyumlu)
+    -- 📱 PANEL ARAYÜZÜ (Eski v2.2 Tasarımı)
     -- ============================================
     
     -- Eski GUI varsa sil
     local oldGui = player.PlayerGui:FindFirstChild("RobloxTR_Gui")
     if oldGui then oldGui:Destroy() end
     
-    -- Ana GUI
-    local gui = Instance.new("ScreenGui")
-    gui.Name = "RobloxTR_Gui"
-    gui.Parent = player.PlayerGui
-    gui.ResetOnSpawn = false
-    gui.Enabled = true
+    local sg = Instance.new("ScreenGui")
+    sg.Name = "RobloxTR_Gui"
+    sg.Parent = player.PlayerGui
+    sg.ResetOnSpawn = false
+    sg.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
     
-    -- ============================================
-    -- 🔘 AÇMA/KAPATMA BUTONU (Sağ Üst - Resimdeki gibi)
-    -- ============================================
+    -- Ana Panel
+    local mf = Instance.new("Frame")
+    mf.Name = "MainFrame"
+    mf.Parent = sg
+    mf.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+    mf.BackgroundTransparency = 0.15
+    mf.Position = UDim2.new(0.25, 0, 0.15, 0)
+    mf.Size = UDim2.new(0, 480, 0, 480)
+    mf.Visible = false
     
-    local toggleBtn = Instance.new("TextButton")
-    toggleBtn.Size = UDim2.new(0, 50, 0, 50)
-    toggleBtn.Position = UDim2.new(1, -60, 0, 10)
-    toggleBtn.Text = "⚡"
-    toggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    toggleBtn.TextScaled = true
-    toggleBtn.BackgroundColor3 = BUTON_RENK
-    toggleBtn.BackgroundTransparency = 0.2
-    toggleBtn.BorderSizePixel = 0
-    toggleBtn.Parent = gui
-    toggleBtn.ZIndex = 10
+    local mc = Instance.new("UICorner")
+    mc.CornerRadius = UDim.new(0, 10)
+    mc.Parent = mf
     
-    local btnCorner = Instance.new("UICorner")
-    btnCorner.CornerRadius = UDim.new(1, 0)
-    btnCorner.Parent = toggleBtn
+    -- Sidebar
+    local sidebar = Instance.new("Frame")
+    sidebar.Name = "Sidebar"
+    sidebar.Parent = mf
+    sidebar.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+    sidebar.BackgroundTransparency = 0.3
+    sidebar.Size = UDim2.new(0, 140, 1, 0)
     
-    -- Buton sürükleme
-    local btnDragging = false
-    local btnDragStart, btnStartPos
+    local sc = Instance.new("UICorner")
+    sc.CornerRadius = UDim.new(0, 10)
+    sc.Parent = sidebar
     
-    toggleBtn.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            btnDragging = true
-            btnDragStart = input.Position
-            btnStartPos = toggleBtn.Position
-        end
+    -- Başlık
+    local t = Instance.new("TextLabel")
+    t.Parent = sidebar
+    t.BackgroundTransparency = 1
+    t.Position = UDim2.new(0, 12, 0, 15)
+    t.Size = UDim2.new(0, 120, 0, 25)
+    t.Font = Enum.Font.SourceSansBold
+    t.Text = "RobloxTR v1.7"
+    t.TextColor3 = Color3.fromRGB(255, 190, 0)
+    t.TextSize = 18
+    t.TextXAlignment = Enum.TextXAlignment.Left
+    
+    local st = Instance.new("TextLabel")
+    st.Parent = sidebar
+    st.BackgroundTransparency = 1
+    st.Position = UDim2.new(0, 12, 0, 35)
+    st.Size = UDim2.new(0, 120, 0, 15)
+    st.Font = Enum.Font.SourceSans
+    st.Text = "Kurucu: Mansfer"
+    st.TextColor3 = Color3.fromRGB(150, 150, 150)
+    st.TextSize = 12
+    st.TextXAlignment = Enum.TextXAlignment.Left
+    
+    -- Kapatma butonu
+    local cb = Instance.new("TextButton")
+    cb.Parent = mf
+    cb.BackgroundTransparency = 1
+    cb.Position = UDim2.new(0, 445, 0, 10)
+    cb.Size = UDim2.new(0, 25, 0, 25)
+    cb.Font = Enum.Font.SourceSansBold
+    cb.Text = "X"
+    cb.TextColor3 = Color3.fromRGB(255, 50, 50)
+    cb.TextSize = 18
+    cb.MouseButton1Click:Connect(function()
+        mf.Visible = false
     end)
     
-    toggleBtn.InputEnded:Connect(function()
-        btnDragging = false
-    end)
+    -- İçerik (Main)
+    local mainContent = Instance.new("Frame")
+    mainContent.Name = "MainContent"
+    mainContent.Parent = mf
+    mainContent.BackgroundTransparency = 1
+    mainContent.Position = UDim2.new(0, 150, 0, 45)
+    mainContent.Size = UDim2.new(0, 315, 0, 425)
+    mainContent.Visible = true
     
-    toggleBtn.InputChanged:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-            if btnDragging then
-                local delta = input.Position - btnDragStart
-                toggleBtn.Position = UDim2.new(
-                    btnStartPos.X.Scale,
-                    btnStartPos.X.Offset + delta.X,
-                    btnStartPos.Y.Scale,
-                    btnStartPos.Y.Offset + delta.Y
-                )
-            end
-        end
-    end)
-    
-    -- Panel aç/kapa
-    local panelVisible = true
-    toggleBtn.MouseButton1Click:Connect(function()
-        panelVisible = not panelVisible
-        mainFrame.Visible = panelVisible
-    end)
-    
-    -- ============================================
-    -- 📱 ANA PANEL (Resimdeki gibi küçük ve mobil uyumlu)
-    -- ============================================
-    
-    local mainFrame = Instance.new("Frame")
-    mainFrame.Size = UDim2.new(0, 350, 0, 420)  -- Telefon için küçük
-    mainFrame.Position = UDim2.new(0.5, -175, 0.5, -210)
-    mainFrame.BackgroundColor3 = PANEL_RENK
-    mainFrame.BackgroundTransparency = 0.1
-    mainFrame.BorderSizePixel = 0
-    mainFrame.Parent = gui
-    mainFrame.Visible = true
-    mainFrame.ZIndex = 5
-    
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 12)
-    corner.Parent = mainFrame
-    
-    local stroke = Instance.new("UIStroke")
-    stroke.Thickness = 2
-    stroke.Color = BUTON_RENK
-    stroke.Parent = mainFrame
-    
-    -- Panel sürükleme
-    local dragging = false
-    local dragStart, startPos
-    
-    mainFrame.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            dragging = true
-            dragStart = input.Position
-            startPos = mainFrame.Position
-        end
-    end)
-    
-    mainFrame.InputEnded:Connect(function()
-        dragging = false
-    end)
-    
-    mainFrame.InputChanged:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-            if dragging then
-                local delta = input.Position - dragStart
-                mainFrame.Position = UDim2.new(
-                    startPos.X.Scale,
-                    startPos.X.Offset + delta.X,
-                    startPos.Y.Scale,
-                    startPos.Y.Offset + delta.Y
-                )
-            end
-        end
-    end)
-    
-    -- Başlık (Resimdeki gibi)
-    local titleBar = Instance.new("Frame")
-    titleBar.Size = UDim2.new(1, 0, 0, 35)
-    titleBar.BackgroundColor3 = BUTON_RENK
-    titleBar.BackgroundTransparency = 0.2
-    titleBar.BorderSizePixel = 0
-    titleBar.Parent = mainFrame
-    
-    local titleCorner = Instance.new("UICorner")
-    titleCorner.CornerRadius = UDim.new(0, 12)
-    titleCorner.Parent = titleBar
-    
-    local title = Instance.new("TextLabel")
-    title.Size = UDim2.new(1, -40, 1, 0)
-    title.Position = UDim2.new(0, 10, 0, 0)
-    title.Text = PANEL_BASLIK
-    title.TextColor3 = Color3.fromRGB(255, 255, 255)
-    title.BackgroundTransparency = 1
-    title.TextScaled = true
-    title.Font = Enum.Font.GothamBold
-    title.TextXAlignment = Enum.TextXAlignment.Left
-    title.Parent = titleBar
-    
-    -- Kapatma butonu (X)
-    local closeBtn = Instance.new("TextButton")
-    closeBtn.Size = UDim2.new(0, 25, 0, 25)
-    closeBtn.Position = UDim2.new(1, -30, 0, 5)
-    closeBtn.Text = "✕"
-    closeBtn.TextColor3 = Color3.fromRGB(255, 80, 80)
-    closeBtn.TextScaled = true
-    closeBtn.BackgroundTransparency = 1
-    closeBtn.Parent = titleBar
-    closeBtn.MouseButton1Click:Connect(function()
-        panelVisible = false
-        mainFrame.Visible = false
-    end)
-    
-    -- Scroll alanı (kaydırma)
+    -- Scroll
     local scroll = Instance.new("ScrollingFrame")
-    scroll.Size = UDim2.new(1, -10, 1, -45)
-    scroll.Position = UDim2.new(0, 5, 0, 40)
+    scroll.Parent = mainContent
+    scroll.Size = UDim2.new(1, 0, 1, 0)
     scroll.BackgroundTransparency = 1
     scroll.BorderSizePixel = 0
     scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
-    scroll.Parent = mainFrame
     
-    -- Butonlar (3 sütun - mobil uyumlu)
-    local columns = 3
-    local btnWidth = 0.30
-    local btnHeight = 0.11
-    local startY = 0.02
-    local spacingX = 0.025
-    local spacingY = 0.02
+    local layout = Instance.new("UIListLayout")
+    layout.Parent = scroll
+    layout.SortOrder = Enum.SortOrder.LayoutOrder
+    layout.Padding = UDim.new(0, 4)
     
-    local maxRows = 0
+    -- İfade Butonları
+    local function CreateEmoteBtn(emoteName, displayName)
+        local b = Instance.new("TextButton")
+        b.Parent = scroll
+        b.Size = UDim2.new(0, 295, 0, 38)
+        b.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+        b.Font = Enum.Font.SourceSansBold
+        b.Text = displayName
+        b.TextColor3 = Color3.fromRGB(255, 255, 255)
+        b.TextSize = 14
+        local bc = Instance.new("UICorner")
+        bc.CornerRadius = UDim.new(0, 6)
+        bc.Parent = b
+        
+        b.MouseButton1Click:Connect(function()
+            playEmote(emoteName)
+            b.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
+            task.wait(0.15)
+            b.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+        end)
+        
+        return b
+    end
     
-    for i, cmd in ipairs(COMMANDS) do
-        local row = math.floor((i-1) / columns)
-        local col = (i-1) % columns
-        
-        if row > maxRows then maxRows = row end
-        
-        local btn = Instance.new("TextButton")
-        btn.Size = UDim2.new(btnWidth, 0, btnHeight, 0)
-        btn.Position = UDim2.new(
-            (col * (btnWidth + spacingX)) + 0.015,
-            0,
-            startY + (row * (btnHeight + spacingY)),
-            0
-        )
-        btn.Text = cmd.emoji .. " " .. cmd.name
-        btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        btn.TextScaled = true
-        btn.BackgroundColor3 = Color3.fromRGB(cmd.color[1], cmd.color[2], cmd.color[3])
-        btn.BackgroundTransparency = 0.2
-        btn.BorderSizePixel = 0
-        btn.Parent = scroll
-        btn.ZIndex = 6
-        
-        local btnCorner = Instance.new("UICorner")
-        btnCorner.CornerRadius = UDim.new(0, 6)
-        btnCorner.Parent = btn
-        
-        btn.MouseButton1Click:Connect(function()
-            remoteEvent:FireServer(cmd.name)
-            TweenService:Create(btn, TweenInfo.new(0.1), {BackgroundTransparency = 0.8}):Play()
-            task.wait(0.1)
-            TweenService:Create(btn, TweenInfo.new(0.1), {BackgroundTransparency = 0.2}):Play()
+    -- Tüm ifadeleri ekle
+    for _, emote in ipairs(EMOTES) do
+        CreateEmoteBtn(emote.animation, emote.name)
+    end
+    
+    -- Canvas boyutunu güncelle
+    layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        scroll.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y + 10)
+    end)
+    
+    -- Panel Açma Butonu
+    local tog = Instance.new("TextButton")
+    tog.Name = "ToggleButton"
+    tog.Parent = sg
+    tog.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    tog.BackgroundTransparency = 0.2
+    tog.Position = UDim2.new(0.60, 0, 0.02, 0)
+    tog.Size = UDim2.new(0, 100, 0, 35)
+    tog.Font = Enum.Font.SourceSansBold
+    tog.Text = "RobloxTR"
+    tog.TextColor3 = Color3.fromRGB(255, 190, 0)
+    tog.TextSize = 16
+    Instance.new("UICorner", tog).CornerRadius = UDim.new(0, 8)
+    
+    local stroke = Instance.new("UIStroke", tog)
+    stroke.Color = Color3.fromRGB(255, 190, 0)
+    stroke.Thickness = 1
+    
+    tog.MouseButton1Click:Connect(function()
+        mf.Visible = not mf.Visible
+    end)
+    
+    -- Sürükleme
+    local function MakeDraggable(f)
+        local s, iPos, sPos
+        f.InputBegan:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                s = true
+                iPos = input.Position
+                sPos = f.Position
+                input.Changed:Connect(function()
+                    if input.UserInputState == Enum.UserInputState.End then
+                        s = false
+                    end
+                end)
+            end
+        end)
+        f.InputChanged:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+                if s then
+                    local delta = input.Position - iPos
+                    f.Position = UDim2.new(
+                        sPos.X.Scale,
+                        sPos.X.Offset + delta.X,
+                        sPos.Y.Scale,
+                        sPos.Y.Offset + delta.Y
+                    )
+                end
+            end
         end)
     end
     
-    scroll.CanvasSize = UDim2.new(0, 0, 0, (maxRows + 1) * 60 + 20)
+    MakeDraggable(tog)
+    MakeDraggable(mf)
     
-    -- ============================================
-    -- ⌨️ PC için Z tuşu
-    -- ============================================
-    
-    UserInputService.InputBegan:Connect(function(input)
-        if input.KeyCode == Enum.KeyCode.Z then
-            panelVisible = not panelVisible
-            mainFrame.Visible = panelVisible
-        end
-    end)
-    
-    print("✅ RobloxTR " .. VERSION .. " yüklendi! (" .. #COMMANDS .. " emoji komut)")
-    print("📱 Sağ üstteki ⚡ butonuna tıkla (sürüklenebilir)")
-    print("⌨️ PC: Z tuşuna bas")
-    print("🔄 Panel başlangıçta AÇIK")
+    print("✅ RobloxTR 1.7 yüklendi! (" .. #EMOTES .. " ifade)")
+    print("📱 Sağ üstteki 'RobloxTR' butonuna tıkla")
+    print("🔄 Panel başlangıçta KAPALI")
 ]])()
 
-print("🎮 RobloxTR 2.2 başlatıldı! (Mobil uyumlu emoji panel)")
+print("🎮 RobloxTR 1.7 başlatıldı! (Oyun içi ifadeler/emote)")
