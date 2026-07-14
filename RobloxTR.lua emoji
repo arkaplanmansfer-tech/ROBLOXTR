@@ -1,5 +1,5 @@
 -- ============================================
--- 📁 RobloxTR 1.2 - Delta Pozisyon Düzeltmesi
+-- 📁 RobloxTR 1.1.1 - Delta Pozisyon Düzeltmesi
 -- 🚀 Kullanım: loadstring(game:HttpGet("URL"))()
 -- ============================================
 
@@ -472,7 +472,7 @@ loadstring([[
         end
     end)
     
-    print("✅ RobloxTR 1.2 yüklendi! (" .. #COMMANDS .. " komut)")
+    print("✅ RobloxTR 1.1.1 yüklendi! (" .. #COMMANDS .. " komut)")
     print("📱 Delta Tarzı: Sağ alttaki ⚡ butonuna tıkla")
     print("⌨️ PC: Z tuşuna bas")
     print("🔄 Sürüklemek için tıkla ve sürükle")
