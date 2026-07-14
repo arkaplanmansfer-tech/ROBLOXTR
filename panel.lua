@@ -1,6 +1,6 @@
 -- =============================================================================
--- ROBLOXTR PREMIUM HUB (v3.2 - TELEPORT & ESP UPDATE)
--- Kurucu: Mansfer | Sürüm: v3.2 | Yeni: Smooth TP, Player List, ESP Fixes
+-- ROBLOXTR PREMIUM HUB (v3.4 - ADVANCED TP UPDATE)
+-- Kurucu: Mansfer | Sürüm: v3.4 | Yeni: TP Modu (Anında/Süzülerek) Seçeneği
 -- =============================================================================
 
 local Players = game:GetService("Players")
@@ -20,7 +20,7 @@ local sg = Instance.new("ScreenGui")
 sg.Name = "RobloxTR_Hub"; sg.Parent = LocalPlayer.PlayerGui; sg.ResetOnSpawn = false
 sg.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
--- ANA PANEL ÇERÇEVESİ (Boyutlar yeni menüler için büyütüldü)
+-- ANA PANEL ÇERÇEVESİ
 local mf = Instance.new("Frame")
 mf.Name = "MainFrame"; mf.Parent = sg; mf.BackgroundColor3 = Color3.fromRGB(15, 15, 20); mf.BackgroundTransparency = 0.1
 mf.Position = UDim2.new(0.5, -260, 0.5, -180); mf.Size = UDim2.new(0, 520, 0, 370); mf.Visible = false
@@ -39,7 +39,7 @@ Instance.new("UICorner", avatar).CornerRadius = UDim.new(1, 0)
 
 local t = Instance.new("TextLabel")
 t.Parent = sidebar; t.BackgroundTransparency = 1; t.Position = UDim2.new(0, 0, 0, 70); t.Size = UDim2.new(1, 0, 0, 20)
-t.Font = Enum.Font.SourceSansBold; t.Text = "RobloxTR v3.2"; t.TextColor3 = Color3.fromRGB(255, 190, 0); t.TextSize = 16
+t.Font = Enum.Font.SourceSansBold; t.Text = "RobloxTR v3.4"; t.TextColor3 = Color3.fromRGB(255, 190, 0); t.TextSize = 16
 
 local cb = Instance.new("TextButton")
 cb.Parent = mf; cb.BackgroundTransparency = 1; cb.Position = UDim2.new(0, 485, 0, 8); cb.Size = UDim2.new(0, 25, 0, 25)
@@ -102,9 +102,8 @@ local function addTab(name, pos, content)
     end)
     table.insert(tabButtons, b)
 end
--- Sekme yerleşimleri yeni boyuta göre ayarlandı
 addTab("🏠 Home", 95, homeC); addTab("⚡ Veledrom", 135, mainC); addTab("🎯 ESP / Combat", 175, espC); 
-addTab("🎵 Music Hub", 215, musicC); addTab("🌌 Teleport (Yeni)", 255, tpC); addTab("⚙️ Ayarlar", 295, setC)
+addTab("🎵 Music Hub", 215, musicC); addTab("🌌 Teleport", 255, tpC); addTab("⚙️ Ayarlar", 295, setC)
 if tabButtons[1] then tabButtons[1].BackgroundColor3 = Color3.fromRGB(255, 190, 0); tabButtons[1].TextColor3 = Color3.fromRGB(15, 15, 20) end
 
 -- [SLIDER & BUTTON OLUŞTURUCU]
@@ -134,7 +133,7 @@ local function CreateBtn(pnt, txt, cb, color)
     b.MouseButton1Click:Connect(function() cb(b) end); return b
 end
 
-local Config = { WalkSpeed = 16, JumpPower = 50, FlySpeed = 50, HitboxSize = 2, TPDuration = 2 }
+local Config = { WalkSpeed = 16, JumpPower = 50, FlySpeed = 50, HitboxSize = 2, TPDuration = 2, TPMode = "Anında" }
 local State = { Flying = false, InfJump = false, Hitbox = false, ESP = false, Chams = false }
 
 -- [MAIN / VELEDROM]
@@ -187,7 +186,7 @@ UserInputService.JumpRequest:Connect(function()
 end)
 CreateBtn(mainC, "🦘 Infinity Jump", function(b) State.InfJump = not State.InfJump; b.BackgroundColor3 = State.InfJump and Color3.fromRGB(0, 160, 80) or Color3.fromRGB(30, 30, 38) end)
 
--- [ESP & CHAMS (YENİ OYUNCU FİX)]
+-- [ESP & CHAMS]
 CreateSlider(espC, "Hitbox Genişliği", 2, 30, 2, function(v) Config.HitboxSize = v end)
 CreateBtn(espC, "🎯 Hitbox Expander", function(b) State.Hitbox = not State.Hitbox; b.BackgroundColor3 = State.Hitbox and Color3.fromRGB(0, 160, 80) or Color3.fromRGB(30, 30, 38) end)
 task.spawn(function()
@@ -203,7 +202,6 @@ task.spawn(function()
     end
 end)
 
--- Sürekli kontrol eden sağlamlaştırılmış ESP yapısı
 task.spawn(function()
     while task.wait(1) do
         for _, p in pairs(Players:GetPlayers()) do
@@ -230,25 +228,56 @@ end)
 CreateBtn(espC, "👁️ Name & Mesafe ESP", function(b) State.ESP = not State.ESP; b.BackgroundColor3 = State.ESP and Color3.fromRGB(0, 160, 80) or Color3.fromRGB(30, 30, 38) end)
 CreateBtn(espC, "🎨 Wall Chams (X-Ray)", function(b) State.Chams = not State.Chams; b.BackgroundColor3 = State.Chams and Color3.fromRGB(0, 160, 80) or Color3.fromRGB(30, 30, 38) end)
 
--- [TELEPORT (YENİ SİSTEM)]
-CreateSlider(tpC, "⏳ TP Süresi (Saniye)", 0, 10, 2, function(v) Config.TPDuration = v end)
+-- [TELEPORT (GELİŞMİŞ MOD SİSTEMİ)]
+CreateBtn(tpC, "🔀 TP Modu: Anında (Instant)", function(b)
+    if Config.TPMode == "Anında" then 
+        Config.TPMode = "Süzülerek"
+        b.BackgroundColor3 = Color3.fromRGB(0, 130, 200)
+    else 
+        Config.TPMode = "Anında" 
+        b.BackgroundColor3 = Color3.fromRGB(30, 30, 38)
+    end
+    b.Text = "🔀 TP Modu: " .. Config.TPMode
+end)
+
+CreateSlider(tpC, "⏳ Süzülme Süresi (Sadece Smooth modda)", 0, 10, 2, function(v) Config.TPDuration = v end)
+
+local savedLocation = nil
+CreateBtn(tpC, "📍 Şu Anki Konumu Kaydet", function(b)
+    if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        savedLocation = LocalPlayer.Character.HumanoidRootPart.CFrame
+        b.Text = "✅ Konum Kaydedildi!"
+        task.wait(1)
+        b.Text = "📍 Şu Anki Konumu Kaydet"
+    end
+end, Color3.fromRGB(0, 100, 150))
+
+CreateBtn(tpC, "🔙 Kaydedilen Yere Işınlan", function()
+    if savedLocation and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        local myHRP = LocalPlayer.Character.HumanoidRootPart
+        if Config.TPMode == "Süzülerek" and Config.TPDuration > 0 then
+            local tpTween = TweenService:Create(myHRP, TweenInfo.new(Config.TPDuration, Enum.EasingStyle.Linear), {CFrame = savedLocation})
+            tpTween:Play()
+        else
+            myHRP.CFrame = savedLocation
+        end
+    end
+end, Color3.fromRGB(0, 140, 70))
 
 local function loadPlayersForTP()
-    -- Eski oyuncu butonlarını temizle
     for _, child in pairs(tpC:GetChildren()) do if child.Name == "PlayerTPBtn" then child:Destroy() end end
-    
     for _, p in pairs(Players:GetPlayers()) do
         if p ~= LocalPlayer then
-            local btn = CreateBtn(tpC, "🚀 TP -> " .. p.DisplayName .. " (@" .. p.Name .. ")", function()
+            local btn = CreateBtn(tpC, "🚀 TP -> " .. p.DisplayName, function()
                 if p.Character and p.Character:FindFirstChild("HumanoidRootPart") and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
                     local myHRP = LocalPlayer.Character.HumanoidRootPart
-                    local targetCFrame = p.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3) -- Arkasına ışınlar
+                    local targetCFrame = p.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
                     
-                    if Config.TPDuration > 0 then
+                    if Config.TPMode == "Süzülerek" and Config.TPDuration > 0 then
                         local tpTween = TweenService:Create(myHRP, TweenInfo.new(Config.TPDuration, Enum.EasingStyle.Linear), {CFrame = targetCFrame})
                         tpTween:Play()
-                    else
-                        myHRP.CFrame = targetCFrame
+                    else 
+                        myHRP.CFrame = targetCFrame 
                     end
                 end
             end, Color3.fromRGB(35, 40, 50))
@@ -256,15 +285,12 @@ local function loadPlayersForTP()
         end
     end
 end
-
 CreateBtn(tpC, "🔄 Oyuncu Listesini Yenile", function(b)
     b.Text = "Yenileniyor..."
-    task.wait(0.2)
-    loadPlayersForTP()
+    task.wait(0.2); loadPlayersForTP()
     b.Text = "🔄 Oyuncu Listesini Yenile"
-end, Color3.fromRGB(0, 130, 200))
-
-loadPlayersForTP() -- İlk açılışta listeyi doldur
+end, Color3.fromRGB(150, 80, 0))
+loadPlayersForTP()
 
 -- [MUSIC]
 local srv = sg:FindFirstChild("HubMusic")
@@ -290,13 +316,4 @@ CreateBtn(setC, "🔗 WhatsApp Grubunu Kopyala", function() if setclipboard then
 -- TOGGLE DRAG
 local tog = Instance.new("ImageButton", sg); tog.Size = UDim2.new(0, 52, 0, 52); tog.Position = UDim2.new(0.6, 0, 0.02, 0); tog.Image = "rbxassetid://10723345437"; tog.BackgroundColor3 = Color3.fromRGB(20,20,25)
 Instance.new("UICorner", tog).CornerRadius = UDim.new(0, 10); local tStroke = Instance.new("UIStroke", tog); tStroke.Color = Color3.fromRGB(255, 190, 0); tStroke.Thickness = 1.5
-tog.MouseButton1Click:Connect(function() mf.Visible = not mf.Visible end)
-cb.MouseButton1Click:Connect(function() mf.Visible = false end)
-local function Drag(f)
-    local s, i, sp; f.InputBegan:Connect(function(inpt) if inpt.UserInputType == Enum.UserInputType.MouseButton1 or inpt.UserInputType == Enum.UserInputType.Touch then s = true; i = inpt.Position; sp = f.Position end end)
-    UserInputService.InputChanged:Connect(function(inpt) if s and (inpt.UserInputType == Enum.UserInputType.MouseMovement or inpt.UserInputType == Enum.UserInputType.Touch) then local d = inpt.Position - i; f.Position = UDim2.new(sp.X.Scale, sp.X.Offset + d.X, sp.Y.Scale, sp.Y.Offset + d.Y) end end)
-    UserInputService.InputEnded:Connect(function(inpt) if inpt.UserInputType == Enum.UserInputType.MouseButton1 or inpt.UserInputType == Enum.UserInputType.Touch then s = false end end)
-end
-Drag(mf); Drag(tog)
-
-print("RobloxTR v3.2 Premium Hub Yüklendi! Yeni TP Sistemi Aktif!")
+tog.MouseButton1Click:Connect(funct
