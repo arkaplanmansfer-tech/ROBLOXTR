@@ -317,3 +317,4 @@ CreateBtn(setC, "🔗 WhatsApp Grubunu Kopyala", function() if setclipboard then
 local tog = Instance.new("ImageButton", sg); tog.Size = UDim2.new(0, 52, 0, 52); tog.Position = UDim2.new(0.6, 0, 0.02, 0); tog.Image = "rbxassetid://10723345437"; tog.BackgroundColor3 = Color3.fromRGB(20,20,25)
 Instance.new("UICorner", tog).CornerRadius = UDim.new(0, 10); local tStroke = Instance.new("UIStroke", tog); tStroke.Color = Color3.fromRGB(255, 190, 0); tStroke.Thickness = 1.5
 tog.MouseButton1Click:Connect(funct
+    
