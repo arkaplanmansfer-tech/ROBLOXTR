@@ -313,8 +313,60 @@ CreateBtn(setC, "🚀 Ultra FPS Boost", function(b)
 end)
 CreateBtn(setC, "🔗 WhatsApp Grubunu Kopyala", function() if setclipboard then setclipboard("bit.ly/robloxturkiye") end end, Color3.fromRGB(255, 150, 0))
 
--- TOGGLE DRAG
-local tog = Instance.new("ImageButton", sg); tog.Size = UDim2.new(0, 52, 0, 52); tog.Position = UDim2.new(0.6, 0, 0.02, 0); tog.Image = "rbxassetid://10723345437"; tog.BackgroundColor3 = Color3.fromRGB(20,20,25)
-Instance.new("UICorner", tog).CornerRadius = UDim.new(0, 10); local tStroke = Instance.new("UIStroke", tog); tStroke.Color = Color3.fromRGB(255, 190, 0); tStroke.Thickness = 1.5
-tog.MouseButton1Click:Connect(funct
-    
+-- ============================================
+-- TOGGLE BUTONU VE SÜRÜKLEME (TAM VERSİYON)
+-- ============================================
+local tog = Instance.new("ImageButton", sg)
+tog.Size = UDim2.new(0, 52, 0, 52)
+tog.Position = UDim2.new(0.6, 0, 0.02, 0)
+tog.Image = "rbxassetid://10723345437"
+tog.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+Instance.new("UICorner", tog).CornerRadius = UDim.new(0, 10)
+local tStroke = Instance.new("UIStroke", tog)
+tStroke.Color = Color3.fromRGB(255, 190, 0)
+tStroke.Thickness = 1.5
+
+-- Panel Aç/Kapa
+tog.MouseButton1Click:Connect(function()
+    mf.Visible = not mf.Visible
+end)
+
+-- X Butonu ile Kapat
+cb.MouseButton1Click:Connect(function()
+    mf.Visible = false
+end)
+
+-- Sürükleme Fonksiyonu
+local function Drag(f)
+    local dragging = false
+    local dragStart, startPos
+
+    f.InputBegan:Connect(function(inpt)
+        if inpt.UserInputType == Enum.UserInputType.MouseButton1 or inpt.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = inpt.Position
+            startPos = f.Position
+            inpt.Changed:Connect(function()
+                if inpt.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(inpt)
+        if dragging and (inpt.UserInputType == Enum.UserInputType.MouseMovement or inpt.UserInputType == Enum.UserInputType.Touch) then
+            local delta = inpt.Position - dragStart
+            f.Position = UDim2.new(
+                startPos.X.Scale,
+                startPos.X.Offset + delta.X,
+                startPos.Y.Scale,
+                startPos.Y.Offset + delta.Y
+            )
+        end
+    end)
+end
+
+Drag(tog)
+Drag(mf)
+
