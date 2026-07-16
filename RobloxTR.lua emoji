@@ -1,6 +1,6 @@
 -- ============================================
--- 📁 RobloxTR 1.8.6 - GÜNCELLENMİŞ EMOTE PANELİ
--- 🚀 Karakter animasyonları için Animator desteği eklendi
+-- 📁 RobloxTR 2.0 - ULTRA EMOTE PANEL
+-- 🚀 Kurucu: Mansfer | Animator Fix & 20+ Emote
 -- ============================================
 
 loadstring([[
@@ -8,68 +8,71 @@ loadstring([[
         {
             name = "🎭 Eylemler",
             emotes = {
-                {name = "👋 Selam", anim = "wave"},
-                {name = "🙋 İşaret", anim = "point"},
-                {name = "🙌 Havaya", anim = "cheer"},
+                {name = "👋 Selam", anim = "wave"}, {name = "🙋 İşaret", anim = "point"},
+                {name = "🤝 Tokalaş", anim = "handshake"}, {name = "🤳 Selfie", anim = "selfie"},
                 {name = "🤔 Düşün", anim = "think"},
             }
         },
         {
-            name = "💃 Dans",
+            name = "💃 Danslar",
             emotes = {
-                {name = "💃 Dans", anim = "dance"},
-                {name = "🕺 Dans2", anim = "dance2"},
-                {name = "🕺 Dans3", anim = "dance3"},
+                {name = "💃 Dans 1", anim = "dance"}, {name = "🕺 Dans 2", anim = "dance2"},
+                {name = "👯 Dans 3", anim = "dance3"}, {name = "🎸 Gitar", anim = "guitar"},
+                {name = "🙌 Havaya", anim = "cheer"},
+            }
+        },
+        {
+            name = "🧘 Hareketler",
+            emotes = {
+                {name = "🧘 Otur", anim = "sit"}, {name = "😴 Uyu", anim = "sleep"},
+                {name = "💪 Kas", anim = "muscle"}, {name = "🤸 Takla", anim = "flip"},
             }
         }
     }
     
     local player = game.Players.LocalPlayer
-    local UserInputService = game:GetService("UserInputService")
-    
-    local function playEmote(emoteName)
+    local function playEmote(id)
         local char = player.Character
         if not char then return end
-        local humanoid = char:FindFirstChild("Humanoid")
-        if not humanoid then return end
+        local hum = char:FindFirstChild("Humanoid")
+        local animator = hum and hum:FindFirstChild("Animator") or Instance.new("Animator", hum)
         
-        -- Yeni Roblox sistemi: Animator kontrolü
-        local animator = humanoid:FindFirstChild("Animator")
-        if not animator then
-            animator = Instance.new("Animator")
-            animator.Parent = humanoid
-        end
+        for _, t in pairs(animator:GetPlayingAnimationTracks()) do t:Stop() end
         
-        -- Önceki animasyonları durdur
-        for _, track in pairs(animator:GetPlayingAnimationTracks()) do
-            track:Stop()
-        end
-        
-        -- GÜNCEL VE ÇALIŞAN VARSAYILAN ROBLOX ID'LERİ
-        local animMap = {
-            wave = "rbxassetid://507770239",
-            point = "rbxassetid://507770453",
-            cheer = "rbxassetid://507770677",
-            think = "rbxassetid://507771239",
-            dance = "rbxassetid://507771019",
-            dance2 = "rbxassetid://507771955",
-            dance3 = "rbxassetid://507772104"
+        local ids = {
+            wave="507770239", point="507770453", handshake="507771111", selfie="11333005520",
+            think="507771239", dance="507771019", dance2="507771955", dance3="507772104",
+            guitar="4249232214", cheer="507770677", sit="507770000", sleep="507770777",
+            muscle="123232761", flip="129452652"
         }
         
-        local animId = animMap[emoteName]
-        if not animId then return end
-        
-        local success, track = pcall(function()
-            local anim = Instance.new("Animation")
-            anim.AnimationId = animId
-            return animator:LoadAnimation(anim)
-        end)
-        
-        if success and track then
-            track:Play()
-        end
+        local a = Instance.new("Animation")
+        a.AnimationId = "rbxassetid://" .. (ids[id] or "")
+        local track = animator:LoadAnimation(a)
+        track:Play()
     end
 
-    -- UI ve Diğer Kodlar (Buradan sonrası senin mevcut panel kodunla aynı kalabilir)
-    -- ... (Panel oluşturma ve buton tıklama kodlarını buraya ekleyebilirsin)
+    -- UI
+    local sg = Instance.new("ScreenGui", player.PlayerGui)
+    local mf = Instance.new("Frame", sg)
+    mf.Size = UDim2.new(0, 250, 0, 300); mf.Position = UDim2.new(0.05, 0, 0.3, 0)
+    mf.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+    Instance.new("UICorner", mf)
+
+    local scroll = Instance.new("ScrollingFrame", mf)
+    scroll.Size = UDim2.new(1, -10, 1, -10); scroll.Position = UDim2.new(0, 5, 0, 5)
+    scroll.BackgroundTransparency = 1; scroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+    Instance.new("UIListLayout", scroll).Padding = UDim.new(0, 5)
+
+    for _, cat in ipairs(CATEGORIES) do
+        local l = Instance.new("TextLabel", scroll)
+        l.Size = UDim2.new(1, 0, 0, 20); l.Text = cat.name; l.BackgroundColor3 = Color3.fromRGB(255, 200, 50)
+        local g = Instance.new("Frame", scroll)
+        g.Size = UDim2.new(1, 0, 0, 0); g.AutomaticSize = Enum.AutomaticSize.Y; g.BackgroundTransparency = 1
+        Instance.new("UIGridLayout", g).CellSize = UDim2.new(0, 75, 0, 25)
+        for _, e in ipairs(cat.emotes) do
+            local b = Instance.new("TextButton", g)
+            b.Text = e.name; b.MouseButton1Click:Connect(function() playEmote(e.anim) end)
+        end
+    end
 ]])()
