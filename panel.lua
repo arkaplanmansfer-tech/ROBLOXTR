@@ -1,6 +1,6 @@
 -- =============================================================================
 -- ROBLOXTR PREMIUM HUB (v4.0 - GOJO & AIMBOT UPDATE)
--- Kurucu: Mansfer | Sürüm: v4.0 | Yeni: Gelişmiş Aimbot (Team Check), Gojo Buton
+-- Kurucu: Mansfer | Sürüm: v4.0 | Orijinal v3.3 Yapısı Korundu
 -- =============================================================================
 
 local Players = game:GetService("Players")
@@ -45,7 +45,7 @@ local cb = Instance.new("TextButton")
 cb.Parent = mf; cb.BackgroundTransparency = 1; cb.Position = UDim2.new(0, 485, 0, 8); cb.Size = UDim2.new(0, 25, 0, 25)
 cb.Font = Enum.Font.SourceSansBold; cb.Text = "X"; cb.TextColor3 = Color3.fromRGB(255, 70, 70); cb.TextSize = 18
 
--- SCROLLING AREAS
+-- SCROLLING CONTENT AREA
 local function CreateScroll(name)
     local sf = Instance.new("ScrollingFrame")
     sf.Name = name; sf.Parent = mf; sf.BackgroundTransparency = 1; sf.Position = UDim2.new(0, 155, 0, 35); sf.Size = UDim2.new(0, 350, 0, 320)
@@ -56,14 +56,45 @@ end
 
 local homeC = CreateScroll("Home"); homeC.Visible = true
 local mainC = CreateScroll("Main"); local espC = CreateScroll("ESP")
-local aimC = CreateScroll("Aimbot"); local tpC = CreateScroll("Teleport"); local setC = CreateScroll("Settings")
+local tpC = CreateScroll("Teleport"); local setC = CreateScroll("Settings")
 
--- [HELPERS]
+-- STATS
+local function addStat(pnt, txt)
+    local l = Instance.new("TextLabel"); l.Parent = pnt; l.Size = UDim2.new(1, -10, 0, 32); l.BackgroundColor3 = Color3.fromRGB(22, 22, 28)
+    l.Font = Enum.Font.SourceSansBold; l.TextColor3 = Color3.fromRGB(220, 220, 220); l.TextSize = 13; Instance.new("UICorner", l).CornerRadius = UDim.new(0, 6)
+    return l
+end
+local fpsL = addStat(homeC, "🚀 FPS: Hesaplıyor..."); local pingL = addStat(homeC, "📡 Ping: Hesaplıyor...")
+
+RunService.RenderStepped:Connect(function()
+    fpsL.Text = "🚀 Sunucu FPS: " .. math.floor(1/RunService.RenderStepped:Wait())
+    local ping = "N/A"
+    pcall(function() ping = math.floor(game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue()) end)
+    pingL.Text = "📡 Anlık Ping: " .. ping .. " ms"
+end)
+
+-- TAB BUTTONS
+local tabButtons = {}
+local function addTab(name, pos, content)
+    local b = Instance.new("TextButton", sidebar); b.Position = UDim2.new(0, 12, 0, pos); b.Size = UDim2.new(0, 120, 0, 32)
+    b.BackgroundColor3 = Color3.fromRGB(25, 25, 30); b.Font = Enum.Font.SourceSansBold; b.Text = name; b.TextColor3 = Color3.fromRGB(200, 200, 200); b.TextSize = 13
+    Instance.new("UICorner", b).CornerRadius = UDim.new(0, 6)
+    b.MouseButton1Click:Connect(function()
+        for _, v in pairs(mf:GetChildren()) do if v:IsA("ScrollingFrame") then v.Visible = false end end
+        for _, btn in pairs(tabButtons) do btn.BackgroundColor3 = Color3.fromRGB(25, 25, 30); btn.TextColor3 = Color3.fromRGB(200, 200, 200) end
+        content.Visible = true; b.BackgroundColor3 = Color3.fromRGB(255, 190, 0); b.TextColor3 = Color3.fromRGB(15, 15, 20)
+    end)
+    table.insert(tabButtons, b)
+end
+addTab("🏠 Home", 95, homeC); addTab("⚡ Veledrom", 135, mainC); addTab("🎯 ESP / Visuals", 175, espC); 
+addTab("🌌 Teleport", 215, tpC); addTab("⚙️ Ayarlar", 255, setC)
+
+-- HELPERS
 local function CreateSlider(pnt, label, min, max, def, cb)
     local f = Instance.new("Frame", pnt); f.Size = UDim2.new(1, -15, 0, 48); f.BackgroundColor3 = Color3.fromRGB(22, 22, 28)
-    Instance.new("UICorner", f).CornerRadius = UDim.new(0, 6); local stroke = Instance.new("UIStroke", f); stroke.Color = Color3.fromRGB(35, 35, 45)
+    Instance.new("UICorner", f).CornerRadius = UDim.new(0, 6)
     local lbl = Instance.new("TextLabel", f); lbl.BackgroundTransparency = 1; lbl.Position = UDim2.new(0, 10, 0, 4); lbl.Size = UDim2.new(1, -20, 0, 18)
-    lbl.Font = Enum.Font.SourceSansBold; lbl.Text = label..": "..def; lbl.TextColor3 = Color3.fromRGB(255, 255, 255); lbl.TextSize = 13; lbl.TextXAlignment = Enum.TextXAlignment.Left
+    lbl.Font = Enum.Font.SourceSansBold; lbl.Text = label..": "..def; lbl.TextColor3 = Color3.fromRGB(255, 255, 255); lbl.TextSize = 13
     local bar = Instance.new("Frame", f); bar.Position = UDim2.new(0, 10, 0, 28); bar.Size = UDim2.new(1, -20, 0, 6); bar.BackgroundColor3 = Color3.fromRGB(45, 45, 55)
     local fill = Instance.new("Frame", bar); fill.Size = UDim2.new((def-min)/(max-min), 0, 1, 0); fill.BackgroundColor3 = Color3.fromRGB(255, 190, 0)
     local active = false
@@ -82,46 +113,32 @@ local function CreateBtn(pnt, txt, cb, color)
     Instance.new("UICorner", b).CornerRadius = UDim.new(0, 6); b.MouseButton1Click:Connect(function() cb(b) end); return b
 end
 
--- CONFIG & STATES
-local Config = { WalkSpeed = 16, JumpPower = 50, FlySpeed = 50, AimbotStrength = 15, AimbotRadius = 200, TeamCheck = true }
-local State = { Flying = false, InfJump = false, Aimbot = false, ESP = false, Chams = false }
-local Whitelist = {}
+local Config = { WalkSpeed = 16, JumpPower = 50, FlySpeed = 50, TPDuration = 2, TeamCheck = true }
+local State = { Flying = false, InfJump = false, ESP = false, Chams = false }
 
--- [TAB BUTTONS]
-local tabButtons = {}
-local function addTab(name, pos, content)
-    local b = Instance.new("TextButton", sidebar); b.Position = UDim2.new(0, 12, 0, pos); b.Size = UDim2.new(0, 120, 0, 32)
-    b.BackgroundColor3 = Color3.fromRGB(25, 25, 30); b.Font = Enum.Font.SourceSansBold; b.Text = name; b.TextColor3 = Color3.fromRGB(200, 200, 200); b.TextSize = 13
-    Instance.new("UICorner", b).CornerRadius = UDim.new(0, 6)
-    b.MouseButton1Click:Connect(function()
-        for _, v in pairs(mf:GetChildren()) do if v:IsA("ScrollingFrame") then v.Visible = false end end
-        for _, btn in pairs(tabButtons) do btn.BackgroundColor3 = Color3.fromRGB(25, 25, 30); btn.TextColor3 = Color3.fromRGB(200, 200, 200) end
-        content.Visible = true; b.BackgroundColor3 = Color3.fromRGB(255, 190, 0); b.TextColor3 = Color3.fromRGB(15, 15, 20)
-    end)
-    table.insert(tabButtons, b)
-end
-addTab("🏠 Home", 95, homeC); addTab("⚡ Veledrom", 135, mainC); addTab("🎯 ESP / Visuals", 175, espC); 
-addTab("🔫 Aimbot", 215, aimC); addTab("🌌 Teleport", 255, tpC); addTab("⚙️ Ayarlar", 295, setC)
+-- [VELEDROM]
+CreateSlider(mainC, "Yürüme Hızı", 16, 300, 16, function(v) Config.WalkSpeed = v end)
+CreateSlider(mainC, "Zıplama Gücü", 50, 300, 50, function(v) Config.JumpPower = v end)
+RunService.RenderStepped:Connect(function()
+    if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
+        LocalPlayer.Character.Humanoid.WalkSpeed = Config.WalkSpeed
+        LocalPlayer.Character.Humanoid.JumpPower = Config.JumpPower
+    end
+end)
 
--- [AIMBOT SECTION]
-CreateBtn(aimC, "🔫 Aimbot: KAPALI", function(b)
-    State.Aimbot = not State.Aimbot; b.Text = State.Aimbot and "🔫 Aimbot: AÇIK" or "🔫 Aimbot: KAPALI"
-    b.BackgroundColor3 = State.Aimbot and Color3.fromRGB(0, 160, 80) or Color3.fromRGB(30, 30, 38)
+-- [AIMBOT - TEAM CHECK DESTEKLİ]
+CreateBtn(mainC, "🔫 Gelişmiş Aimbot (Sağ Tık)", function(b)
+    _G.Aimbot = not _G.Aimbot; b.BackgroundColor3 = _G.Aimbot and Color3.fromRGB(0, 160, 80) or Color3.fromRGB(30, 30, 38)
 end)
-CreateBtn(aimC, "👥 Team Check: AÇIK", function(b)
-    Config.TeamCheck = not Config.TeamCheck; b.Text = Config.TeamCheck and "👥 Team Check: AÇIK" or "👥 Team Check: KAPALI"
-    b.BackgroundColor3 = Config.TeamCheck and Color3.fromRGB(0, 100, 150) or Color3.fromRGB(150, 50, 50)
-end)
-CreateSlider(aimC, "Aimbot Gücü", 1, 100, 15, function(v) Config.AimbotStrength = v end)
-CreateSlider(aimC, "Aimbot Alanı (FOV)", 50, 800, 200, function(v) Config.AimbotRadius = v end)
 
 RunService.RenderStepped:Connect(function()
-    if State.Aimbot and UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton2) then
-        local target = nil; local dist = Config.AimbotRadius
+    if _G.Aimbot and UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton2) then
+        local target = nil; local dist = 200
         for _, p in pairs(Players:GetPlayers()) do
-            if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("Head") and p.Character:FindFirstChild("Humanoid") and p.Character.Humanoid.Health > 0 then
+            if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("Head") then
+                -- TEAM CHECK
                 if Config.TeamCheck and p.Team == LocalPlayer.Team then continue end
-                if table.find(Whitelist, p.Name) then continue end
+                
                 local pos, vis = Camera:WorldToViewportPoint(p.Character.Head.Position)
                 if vis then
                     local mDist = (Vector2.new(pos.X, pos.Y) - UserInputService:GetMouseLocation()).Magnitude
@@ -129,17 +146,7 @@ RunService.RenderStepped:Connect(function()
                 end
             end
         end
-        if target then Camera.CFrame = Camera.CFrame:Lerp(CFrame.new(Camera.CFrame.Position, target.Position), Config.AimbotStrength/100) end
-    end
-end)
-
--- [MAIN / VELEDROM]
-CreateSlider(mainC, "Hız (Speed)", 16, 300, 16, function(v) Config.WalkSpeed = v end)
-CreateSlider(mainC, "Zıplama (Jump)", 50, 300, 50, function(v) Config.JumpPower = v end)
-RunService.RenderStepped:Connect(function()
-    if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
-        LocalPlayer.Character.Humanoid.WalkSpeed = Config.WalkSpeed
-        LocalPlayer.Character.Humanoid.JumpPower = Config.JumpPower
+        if target then Camera.CFrame = Camera.CFrame:Lerp(CFrame.new(Camera.CFrame.Position, target.Position), 0.15) end
     end
 end)
 
@@ -148,7 +155,6 @@ local tog = Instance.new("ImageButton", sg)
 tog.Size = UDim2.new(0, 60, 0, 60); tog.Position = UDim2.new(0.6, 0, 0.02, 0)
 tog.Image = "rbxassetid://15134244566"; tog.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
 Instance.new("UICorner", tog).CornerRadius = UDim.new(0, 12)
-local tStroke = Instance.new("UIStroke", tog); tStroke.Color = Color3.fromRGB(255, 190, 0); tStroke.Thickness = 2
 
 tog.MouseButton1Click:Connect(function() mf.Visible = not mf.Visible end)
 cb.MouseButton1Click:Connect(function() mf.Visible = false end)
@@ -161,5 +167,3 @@ local function Drag(f)
     UserInputService.InputEnded:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 then d = false end end)
 end
 Drag(tog); Drag(mf)
-
-print("✅ RobloxTR Hub v4.0 Yüklendi! Gojo butonuyla açabilirsin.")
