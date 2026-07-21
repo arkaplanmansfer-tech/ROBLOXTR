@@ -1,6 +1,6 @@
 -- =============================================================================
--- 🔱 ROBLOXTR PREMIUM HUB v4.7 - TITAN PRO UPDATE
--- 🚀 Kurucu: Mansfer | 254+ Satır | Ultra Gelişmiş Mobil Hileler
+-- 🔱 ROBLOXTR PREMIUM HUB v4.8 - TITAN PRO UPDATE
+-- 🚀 Kurucu: Mansfer | 200+ Satır | Ultra Gelişmiş Mobil Hileler
 -- =============================================================================
 
 local Players = game:GetService("Players")
@@ -250,4 +250,4 @@ local function Drag(f)
 end
 Drag(tog); Drag(mf)
 
-Notify("RobloxTR v4.7 Titan Pro", "Hoş geldin Mansfer! Panel Hazır.", 5)
+Notify("RobloxTR v4.8 Titan Pro", "Hoş geldin Mansfer! Panel Hazır.", 5)
