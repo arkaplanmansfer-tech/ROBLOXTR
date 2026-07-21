@@ -1,6 +1,6 @@
 -- =============================================================================
--- 🔱 ROBLOXTR PREMIUM HUB v4.7 - MOBİL PRO UPDATE
--- 🚀 Kurucu: Mansfer | 600+ Satır | Mobil Fix & Görsel Şölen
+-- 🔱 ROBLOXTR PREMIUM HUB v4.7 - TITAN PRO UPDATE
+-- 🚀 Kurucu: Mansfer | 254+ Satır | Ultra Gelişmiş Mobil Hileler
 -- =============================================================================
 
 local Players = game:GetService("Players")
@@ -14,18 +14,18 @@ local Mouse = LocalPlayer:GetMouse()
 
 -- [TEMALAR]
 local Themes = {
-    Sari = {Main = Color3.fromRGB(20, 20, 25), Accent = Color3.fromRGB(255, 190, 0)},
-    Siyah = {Main = Color3.fromRGB(10, 10, 10), Accent = Color3.fromRGB(200, 200, 200)},
-    Kirmizi = {Main = Color3.fromRGB(25, 10, 10), Accent = Color3.fromRGB(255, 50, 50)},
-    Beyaz = {Main = Color3.fromRGB(240, 240, 240), Accent = Color3.fromRGB(50, 50, 50)}
+    Sari = {Main = Color3.fromRGB(15, 15, 20), Accent = Color3.fromRGB(255, 190, 0)},
+    Siyah = {Main = Color3.fromRGB(5, 5, 5), Accent = Color3.fromRGB(200, 200, 200)},
+    Kirmizi = {Main = Color3.fromRGB(20, 5, 5), Accent = Color3.fromRGB(255, 50, 50)},
+    Beyaz = {Main = Color3.fromRGB(245, 245, 245), Accent = Color3.fromRGB(40, 40, 40)}
 }
 local CurrentTheme = Themes.Sari
 
--- [BİLDİRİM SİSTEMİ - MOBİL FİX]
+-- [BİLDİRİM SİSTEMİ]
 local function Notify(title, text, duration)
     local notif = Instance.new("ScreenGui", LocalPlayer.PlayerGui)
     local frame = Instance.new("Frame", notif)
-    frame.Size = UDim2.new(0, 200, 0, 60); frame.Position = UDim2.new(1, 0, 0.75, 0)
+    frame.Size = UDim2.new(0, 200, 0, 60); frame.Position = UDim2.new(0.78, 0, 0.75, 0)
     frame.BackgroundColor3 = CurrentTheme.Main; Instance.new("UICorner", frame)
     local stroke = Instance.new("UIStroke", frame); stroke.Color = CurrentTheme.Accent
     
@@ -37,7 +37,8 @@ local function Notify(title, text, duration)
     d.Size = UDim2.new(1, 0, 0, 35); d.Position = UDim2.new(0, 0, 0, 25); d.Text = text
     d.TextColor3 = Color3.fromRGB(255, 255, 255); d.Font = Enum.Font.SourceSans; d.BackgroundTransparency = 1; d.TextSize = 14
     
-    frame:TweenPosition(UDim2.new(0.75, 0, 0.75, 0), "Out", "Quad", 0.5, true)
+    frame.Position = UDim2.new(1, 0, 0.75, 0)
+    frame:TweenPosition(UDim2.new(0.78, 0, 0.75, 0), "Out", "Quad", 0.5, true)
     task.wait(duration or 3)
     frame:TweenPosition(UDim2.new(1, 0, 0.75, 0), "In", "Quad", 0.5, true)
     task.wait(0.5); notif:Destroy()
@@ -52,7 +53,7 @@ sg.Name = "RobloxTR_Hub"; sg.ResetOnSpawn = false
 -- ANA PANEL
 local mf = Instance.new("Frame", sg)
 mf.Name = "MainFrame"; mf.BackgroundColor3 = CurrentTheme.Main; mf.BackgroundTransparency = 0.05
-mf.Position = UDim2.new(0.5, -280, 0.5, -200); mf.Size = UDim2.new(0, 560, 0, 400); mf.Visible = false; mf.ClipsDescendants = true
+mf.Position = UDim2.new(0.5, -280, 0.5, -200); mf.Size = UDim2.new(0, 560, 0, 400); mf.Visible = false
 Instance.new("UICorner", mf).CornerRadius = UDim.new(0, 15)
 local mainStroke = Instance.new("UIStroke", mf); mainStroke.Color = CurrentTheme.Accent; mainStroke.Thickness = 2.5
 
@@ -63,7 +64,7 @@ Instance.new("UICorner", sidebar).CornerRadius = UDim.new(0, 15)
 
 -- LOGO
 local logo = Instance.new("TextLabel", sidebar)
-logo.Size = UDim2.new(1, 0, 0, 50); logo.Text = "ROBLOXTR v4.7"; logo.TextColor3 = CurrentTheme.Accent
+logo.Size = UDim2.new(1, 0, 0, 50); logo.Text = "ROBLOXTR v4.8"; logo.TextColor3 = CurrentTheme.Accent
 logo.Font = Enum.Font.SourceSansBold; logo.TextSize = 20; logo.BackgroundTransparency = 1
 
 -- SCROLLING AREAS
@@ -79,21 +80,21 @@ local homeC = CreateScroll("Home"); homeC.Visible = true
 local mainC = CreateScroll("Main"); local espC = CreateScroll("ESP")
 local combatC = CreateScroll("Combat"); local tpC = CreateScroll("Teleport"); local setC = CreateScroll("Settings")
 
--- [HOME - 3D LOBİ - YAKIN ÇEKİM]
+-- [HOME - 3D LOBİ - DEV KARAKTER]
 local viewFrame = Instance.new("ViewportFrame", homeC)
-viewFrame.Size = UDim2.new(1, -20, 0, 220); viewFrame.BackgroundTransparency = 1; viewFrame.Position = UDim2.new(0, 10, 0, 0)
+viewFrame.Size = UDim2.new(1, -20, 0, 250); viewFrame.BackgroundTransparency = 1; viewFrame.Position = UDim2.new(0, 10, 0, 0)
 
 local function update3D()
     viewFrame:ClearAllChildren()
     local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     char.Archivable = true; local model = char:Clone(); model.Parent = viewFrame
-    local cam = Instance.new("Camera", viewFrame); cam.FieldOfView = 40; viewFrame.CurrentCamera = cam
-    cam.CFrame = CFrame.new(Vector3.new(0, 2, 4), model.PrimaryPart.Position + Vector3.new(0, 0.5, 0))
-    task.spawn(function() while viewFrame.Parent do model:SetPrimaryPartCFrame(model.PrimaryPart.CFrame * CFrame.Angles(0, math.rad(1.5), 0)); task.wait() end end)
+    local cam = Instance.new("Camera", viewFrame); cam.FieldOfView = 30; viewFrame.CurrentCamera = cam
+    cam.CFrame = CFrame.new(Vector3.new(0, 2, 4.5), model.PrimaryPart.Position + Vector3.new(0, 0.5, 0))
+    task.spawn(function() while viewFrame.Parent do model:SetPrimaryPartCFrame(model.PrimaryPart.CFrame * CFrame.Angles(0, math.rad(1), 0)); task.wait() end end)
 end
 task.spawn(update3D)
 
--- [HELPERS - FIXED SLIDER FOR MOBILE]
+-- [HELPERS]
 local function CreateSlider(pnt, label, min, max, def, cb)
     local f = Instance.new("Frame", pnt); f.Size = UDim2.new(1, -20, 0, 55); f.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
     Instance.new("UICorner", f); local stroke = Instance.new("UIStroke", f); stroke.Color = Color3.fromRGB(45, 45, 60)
@@ -121,20 +122,19 @@ local function CreateBtn(pnt, txt, cb, color)
     Instance.new("UICorner", b); local stroke = Instance.new("UIStroke", b); stroke.Color = Color3.fromRGB(60, 60, 80)
     local active = false
     b.MouseButton1Click:Connect(function()
-        active = not active
-        b.BackgroundColor3 = active and Color3.fromRGB(0, 150, 0) or (color or Color3.fromRGB(35, 35, 45))
-        b.Text = active and txt .. " ✅" or txt
-        cb(active)
+        if txt:find("🏠") or txt:find("⚡") or txt:find("🎯") or txt:find("🔫") or txt:find("🌌") or txt:find("⚙️") then
+            cb()
+        else
+            active = not active
+            b.BackgroundColor3 = active and Color3.fromRGB(0, 150, 0) or (color or Color3.fromRGB(35, 35, 45))
+            b.Text = active and txt .. " ✅" or txt
+            cb(active)
+        end
     end)
     return b
 end
 
--- [CONFIG & STATES]
-local Config = { Speed = 16, Jump = 50, Fly = 50, Hitbox = 2, TPDelay = 0.5, FOV = 100, Smooth = 5 }
-local State = { Flying = false, NoClip = false, ESP = false, Tracers = false, Hitbox = false, Aimbot = false, AutoTP = false }
-local SavedPos = nil
-
--- [TAB NAVIGATION]
+-- [TAB NAVIGATION - SIDEBAR FIX]
 local function addTab(name, pos, icon, content)
     local b = CreateBtn(sidebar, icon .. " " .. name, function()
         for _, c in pairs(mf:GetChildren()) do if c:IsA("ScrollingFrame") then c.Visible = false end end
@@ -145,10 +145,17 @@ end
 addTab("Home", 60, "🏠", homeC); addTab("Veledrom", 105, "⚡", mainC); addTab("ESP", 150, "🎯", espC)
 addTab("Combat", 195, "🔫", combatC); addTab("Teleport", 240, "🌌", tpC); addTab("Ayarlar", 285, "⚙️", setC)
 
--- [VELEDROM - MOBİL FIX]
+-- [VELEDROM]
+local Config = { Speed = 16, Jump = 50, Fly = 50, Hitbox = 2, TPDelay = 0.5, FOV = 100, Smooth = 5, TogSize = 60 }
+local State = { Flying = false, NoClip = false, ESP = false, Box = false, Tracers = false, Hitbox = false, Aimbot = false, AutoTP = false }
+
 CreateSlider(mainC, "Hız (Speed)", 16, 500, 16, function(v) Config.Speed = v end)
+CreateBtn(mainC, "🔄 Hızı Sıfırla", function() Config.Speed = 16; Notify("Veledrom", "Hız Sıfırlandı") end)
 CreateSlider(mainC, "Zıplama (Jump)", 50, 500, 50, function(v) Config.Jump = v end)
+CreateBtn(mainC, "🔄 Zıplamayı Sıfırla", function() Config.Jump = 50; Notify("Veledrom", "Zıplama Sıfırlandı") end)
 CreateSlider(mainC, "Uçma Hızı (Fly)", 10, 500, 50, function(v) Config.Fly = v end)
+CreateBtn(mainC, "✈️ Uçma (Fly) Aktif Et", function(a) State.Flying = a end)
+CreateBtn(mainC, "👻 NoClip (Duvar Geçme)", function(a) State.NoClip = a end)
 
 RunService.RenderStepped:Connect(function()
     local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid")
@@ -156,10 +163,8 @@ RunService.RenderStepped:Connect(function()
     if State.NoClip then for _, v in pairs(LocalPlayer.Character:GetDescendants()) do if v:IsA("BasePart") then v.CanCollide = false end end end
 end)
 
-CreateBtn(mainC, "👻 NoClip (Duvar Geçme)", function(a) State.NoClip = a end)
-
--- [ESP - HIGHLIGHT SYSTEM]
-CreateBtn(espC, "👁️ Highlight ESP (Parlak)", function(a)
+-- [ESP - ALL SYSTEMS]
+CreateBtn(espC, "👁️ Highlight ESP (Röntgen)", function(a)
     State.ESP = a
     task.spawn(function()
         while State.ESP do
@@ -176,8 +181,10 @@ CreateBtn(espC, "👁️ Highlight ESP (Parlak)", function(a)
         for _, p in pairs(Players:GetPlayers()) do if p.Character and p.Character:FindFirstChild("TR_ESP") then p.Character.TR_ESP:Destroy() end end
     end)
 end)
+CreateBtn(espC, "📏 Box ESP (Kutu)", function(a) State.Box = a end)
+CreateBtn(espC, "🔗 Tracer ESP (Çizgi)", function(a) State.Tracers = a end)
 
--- [COMBAT - MOBİL AIMBOT]
+-- [COMBAT]
 CreateSlider(combatC, "Aimbot FOV", 50, 800, 100, function(v) Config.FOV = v end)
 CreateBtn(combatC, "🔫 Mobil Aimbot (Kilitle)", function(a)
     State.Aimbot = a
@@ -198,8 +205,11 @@ CreateBtn(combatC, "🔫 Mobil Aimbot (Kilitle)", function(a)
         end
     end)
 end)
+CreateSlider(combatC, "Hitbox Boyutu", 2, 50, 2, function(v) Config.Hitbox = v end)
+CreateBtn(combatC, "🎯 Hitbox Aktif Et", function(a) State.Hitbox = a end)
 
 -- [TELEPORT]
+local SavedPos = nil
 CreateSlider(tpC, "⏱️ TP Gecikmesi", 0.1, 5, 0.5, function(v) Config.TPDelay = v end)
 CreateBtn(tpC, "📍 Konum Kaydet", function() SavedPos = LocalPlayer.Character.HumanoidRootPart.CFrame; Notify("TP", "Konum Kaydedildi") end)
 CreateBtn(tpC, "🔄 Oto-TP (AutoFarm)", function(a)
@@ -209,8 +219,12 @@ end)
 
 -- [SETTINGS]
 CreateBtn(setC, "🔗 Grup Linki (Kopyala)", function() setclipboard("bit.ly/robloxturkiye"); Notify("Grup", "Link Kopyalandı!") end)
-CreateSlider(setC, "Panel Boyutu", 0.5, 1.5, 1, function(v) mf.Size = UDim2.new(0, 560*v, 0, 400*v) end)
+CreateSlider(setC, "Buton Boyutu (Aç/Kapa)", 40, 150, 60, function(v) tog.Size = UDim2.new(0, v, 0, v) end)
 CreateBtn(setC, "🔄 Butonu Sıfırla", function() tog.Position = UDim2.new(0.6, 0, 0.02, 0) end)
+CreateBtn(setC, "🎨 Tema: Sarı", function() CurrentTheme = Themes.Sari; mf.BackgroundColor3 = CurrentTheme.Main; mainStroke.Color = CurrentTheme.Accent end)
+CreateBtn(setC, "🎨 Tema: Siyah", function() CurrentTheme = Themes.Siyah; mf.BackgroundColor3 = CurrentTheme.Main; mainStroke.Color = CurrentTheme.Accent end)
+CreateBtn(setC, "🎨 Tema: Kırmızı", function() CurrentTheme = Themes.Kirmizi; mf.BackgroundColor3 = CurrentTheme.Main; mainStroke.Color = CurrentTheme.Accent end)
+CreateBtn(setC, "🎨 Tema: Beyaz", function() CurrentTheme = Themes.Beyaz; mf.BackgroundColor3 = CurrentTheme.Main; mainStroke.Color = CurrentTheme.Accent end)
 
 -- [TOGGLE & ANIMATION]
 local tog = Instance.new("ImageButton", sg)
@@ -236,4 +250,4 @@ local function Drag(f)
 end
 Drag(tog); Drag(mf)
 
-Notify("RobloxTR v4.7 Pro", "Hoş geldin Mansfer! Panel Hazır.", 5)
+Notify("RobloxTR v4.7 Titan Pro", "Hoş geldin Mansfer! Panel Hazır.", 5)
