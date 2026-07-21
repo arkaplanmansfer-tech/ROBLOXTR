@@ -1,5 +1,5 @@
 -- =============================================================================
--- 🔱 ROBLOXTR PREMIUM HUB v4.6 - STABILITY UPDATE
+-- 🔱 ROBLOXTR PREMIUM HUB v4.6 - MASTER EDITION
 -- 🚀 Kurucu: Mansfer | 500+ Satır | Ultra Gelişmiş Hileler & 3D Lobi
 -- =============================================================================
 
@@ -10,6 +10,29 @@ local Lighting = game:GetService("Lighting")
 local TweenService = game:GetService("TweenService")
 local LocalPlayer = Players.LocalPlayer
 local Camera = workspace.CurrentCamera
+local Mouse = LocalPlayer:GetMouse()
+
+-- [BİLDİRİM SİSTEMİ]
+local function Notify(title, text, duration)
+    local notif = Instance.new("ScreenGui", LocalPlayer.PlayerGui)
+    local frame = Instance.new("Frame", notif)
+    frame.Size = UDim2.new(0, 220, 0, 65); frame.Position = UDim2.new(1, 0, 0.8, 0)
+    frame.BackgroundColor3 = Color3.fromRGB(20, 20, 30); Instance.new("UICorner", frame)
+    local stroke = Instance.new("UIStroke", frame); stroke.Color = Color3.fromRGB(80, 40, 150)
+    
+    local t = Instance.new("TextLabel", frame)
+    t.Size = UDim2.new(1, 0, 0, 25); t.Text = title; t.TextColor3 = Color3.fromRGB(255, 190, 0)
+    t.Font = Enum.Font.SourceSansBold; t.BackgroundTransparency = 1; t.TextSize = 16
+    
+    local d = Instance.new("TextLabel", frame)
+    d.Size = UDim2.new(1, 0, 0, 40); d.Position = UDim2.new(0, 0, 0, 25); d.Text = text
+    d.TextColor3 = Color3.fromRGB(255, 255, 255); d.Font = Enum.Font.SourceSans; d.BackgroundTransparency = 1; d.TextSize = 14
+    
+    frame:TweenPosition(UDim2.new(0.8, 0, 0.8, 0), "Out", "Quad", 0.5, true)
+    task.wait(duration or 3)
+    frame:TweenPosition(UDim2.new(1, 0, 0.8, 0), "In", "Quad", 0.5, true)
+    task.wait(0.5); notif:Destroy()
+end
 
 -- ESKİ PANELİ TEMİZLE
 if LocalPlayer.PlayerGui:FindFirstChild("RobloxTR_Hub") then LocalPlayer.PlayerGui.RobloxTR_Hub:Destroy() end
@@ -99,8 +122,8 @@ local function CreateBtn(pnt, txt, cb, color)
 end
 
 -- CONFIG & STATES
-local Config = { Speed = 16, Jump = 50, Fly = 50, Hitbox = 2, TPDelay = 0.5, FOV = 100 }
-local State = { Flying = false, InfJump = false, NoClip = false, ESP = false, Tracers = false, Hitbox = false, AutoTP = false }
+local Config = { Speed = 16, Jump = 50, Fly = 50, Hitbox = 2, TPDelay = 0.5, FOV = 100, Smooth = 5 }
+local State = { Flying = false, InfJump = false, NoClip = false, ESP = false, Box = false, Tracers = false, Hitbox = false, Aimbot = false, AutoTP = false }
 local SavedPos = nil
 
 -- [TAB NAVIGATION]
@@ -125,7 +148,9 @@ RunService.RenderStepped:Connect(function()
     if State.NoClip then for _, v in pairs(LocalPlayer.Character:GetDescendants()) do if v:IsA("BasePart") then v.CanCollide = false end end end
 end)
 
-CreateBtn(mainC, "👻 NoClip (Duvar Geçme)", function(b) State.NoClip = not State.NoClip end)
+CreateBtn(mainC, "👻 NoClip (Duvar Geçme)", function(b) State.NoClip = not State.NoClip; Notify("NoClip", State.NoClip and "Aktif" or "Pasif") end)
+CreateBtn(mainC, "🚀 Infinite Jump (Sınırsız Zıplama)", function(b) State.InfJump = not State.InfJump; Notify("InfJump", State.InfJump and "Aktif" or "Pasif") end)
+UserInputService.JumpRequest:Connect(function() if State.InfJump then LocalPlayer.Character.Humanoid:ChangeState("Jumping") end end)
 
 local flyV, flyG
 CreateBtn(mainC, "✈️ Fly (Uçma)", function(b)
@@ -150,13 +175,16 @@ CreateBtn(mainC, "✈️ Fly (Uçma)", function(b)
 end)
 
 -- [ESP FEATURES]
-CreateBtn(espC, "👁️ Name ESP (İsimler)", function() State.ESP = not State.ESP end)
-CreateBtn(espC, "📏 Box ESP (Kutular)", function() State.Box = not State.Box end)
-CreateBtn(espC, "🔗 Tracers (Çizgiler)", function() State.Tracers = not State.Tracers end)
+CreateBtn(espC, "👁️ Name ESP (İsimler)", function() State.ESP = not State.ESP; Notify("ESP", State.ESP and "İsimler Aktif" or "Pasif") end)
+CreateBtn(espC, "📏 Box ESP (Kutular)", function() State.Box = not State.Box; Notify("ESP", State.Box and "Kutular Aktif" or "Pasif") end)
+CreateBtn(espC, "🔗 Tracers (Çizgiler)", function() State.Tracers = not State.Tracers; Notify("ESP", State.Tracers and "Çizgiler Aktif" or "Pasif") end)
 
 -- [COMBAT FEATURES]
+CreateSlider(combatC, "Aimbot FOV", 50, 800, 100, function(v) Config.FOV = v end)
+CreateSlider(combatC, "Aimbot Smoothness", 1, 20, 5, function(v) Config.Smooth = v end)
+CreateBtn(combatC, "🔫 Aimbot (Sağ Tık)", function() State.Aimbot = not State.Aimbot; Notify("Combat", State.Aimbot and "Aimbot Aktif" or "Pasif") end)
 CreateSlider(combatC, "Hitbox Boyutu", 2, 50, 2, function(v) Config.Hitbox = v end)
-CreateBtn(combatC, "🎯 Hitbox Aktif Et", function(b) State.Hitbox = not State.Hitbox end)
+CreateBtn(combatC, "🎯 Hitbox Aktif Et", function(b) State.Hitbox = not State.Hitbox; Notify("Combat", State.Hitbox and "Hitbox Aktif" or "Pasif") end)
 
 task.spawn(function()
     while task.wait(0.5) do
@@ -172,9 +200,9 @@ end)
 
 -- [TELEPORT FEATURES]
 CreateSlider(tpC, "⏱️ TP Gecikmesi", 0.1, 5, 0.5, function(v) Config.TPDelay = v end)
-CreateBtn(tpC, "📍 Konum Kaydet", function() SavedPos = LocalPlayer.Character.HumanoidRootPart.CFrame end)
+CreateBtn(tpC, "📍 Konum Kaydet", function() SavedPos = LocalPlayer.Character.HumanoidRootPart.CFrame; Notify("TP", "Konum Kaydedildi") end)
 CreateBtn(tpC, "🔄 Oto-TP (AutoFarm)", function(b)
-    State.AutoTP = not State.AutoTP
+    State.AutoTP = not State.AutoTP; Notify("TP", State.AutoTP and "AutoFarm Başladı" or "Durduruldu")
     task.spawn(function() while State.AutoTP and SavedPos do LocalPlayer.Character.HumanoidRootPart.CFrame = SavedPos; task.wait(Config.TPDelay) end end)
 end)
 
@@ -202,4 +230,4 @@ local function Drag(f)
 end
 Drag(tog); Drag(mf)
 
-print("✅ RobloxTR v4.6 Başarıyla Yüklendi!")
+Notify("RobloxTR v4.6 Master", "Hoş geldin Mansfer! Panel Hazır.", 5)
